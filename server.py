@@ -11,11 +11,11 @@ server_address = '/var/lib/haproxy/stats'
 
 app = Flask(__name__)
 
-#   "show stat" socket command. Returns JSON string instead of CSV. 
 #   TODO: add timeout mechanism
 #   TODO: add parameters
 @app.route('/hapra/api/v1.0/show_stat', methods=['GET'])
 def show_stat():
+    """Return output of "show stat" socket command as a JSON string(instead of CSV.)"""
     #   socket initialization/connection
     sock = socket.socket(socket.AF_UNIX, socket.SOCK_STREAM)
     sock.connect(server_address)
