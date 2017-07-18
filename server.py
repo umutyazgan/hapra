@@ -1,4 +1,7 @@
 #!../flask/bin/python
+
+#   TODO: this application needs root privileges to run. Make it work without it.
+
 import socket
 from flask import Flask, jsonify, abort, make_response, request, url_for
 import csv
@@ -13,7 +16,7 @@ app = Flask(__name__)
 
 #   TODO: add timeout mechanism
 #   TODO: add parameters
-@app.route('/hapra/api/v1.0/show_stat', methods=['GET'])
+@app.route('/hapra/show/stat', methods=['GET'])
 def show_stat():
     """Return output of "show stat" socket command as a JSON string(instead of CSV.)"""
     #   socket initialization/connection
@@ -22,8 +25,8 @@ def show_stat():
     #   send "show stat" command to the socket
     sock.send(b'show stat' + b'\n')
     #   receive answer from socket
-    #   TODO: get rid of fixed message size(2048)
-    data = sock.recv(2048).decode("utf-8")
+    #   TODO: get rid of fixed message size(4096)
+    data = sock.recv(4096).decode("utf-8")
     sock.close()
     #   remove newline character at the end of response string
     data = data[:-1]
