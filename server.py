@@ -12,15 +12,14 @@ from functions import *
 app = Flask(__name__)
 
 #   TODO: add timeout mechanism
-#   TODO: add parameters
 @app.route('/hapra/show/stat', methods=['GET'])
 def show_stat():
     """Return output of "show stat typed" socket command as a JSON string"""
     iid = request.args.get('iid')
     t   = request.args.get('type')
     sid = request.args.get('sid')
-    data = get_stat(iid, t, sid)
-    return parse_stat(data)
+    (data, csv_data) = get_stat(iid, t, sid)
+    return parse_stat(data, csv_data)
 
 if __name__ == '__main__':
     app.run(debug=True)
