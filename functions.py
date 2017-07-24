@@ -48,6 +48,8 @@ def parse_stat(data, csv_data):
     #   -1 by default, which guarantees detection of the first object by the
     #   2nd if statement in the for loop below
     old_identifiers = ['-1','-1','-1']
+    #   a list of sets to keep track of the distinct process numbers
+    pno_sets = []
     #   split data into a list of entries(lines)
     entries = data.splitlines()
     #   obj_count will be necessary to determine number of json objects in the 
@@ -76,6 +78,13 @@ def parse_stat(data, csv_data):
             obj_count += 1
             obj_start_indexes.append(index)
             old_identifiers = identifiers
+            #  for each object, create a new set of process numbers('pno's),
+            #  and add the set to the pno_sets list
+            pno_set = set()
+            pno_sets.append(pno_set)
+        #  add pno of entry to pno_set of the object. Set will ensure that each
+        #  pno is added only once.
+        pno_sets[obj_count-1].add(entries[index][0][5])
     #   set last index + 1 as ending index of the last json object
     obj_start_indexes.append(len(entries))
     #   initialize a list of dictionaries, using obj_count as its size. This
@@ -101,26 +110,30 @@ def parse_stat(data, csv_data):
             dict_list[-1]["type"] = "unknown"
             print("Unknown object type!\n")
             # TODO: handle this error
-        #   set "iid" and "sid" fields to 2nd and 3rd elements respectively
+        #  set "iid" and "sid" fields to 2nd and 3rd elements respectively
         dict_list[i]["iid"] = entries[index][0][1]
         dict_list[i]["sid"] = entries[index][0][2]
-        #   initialize "fields" value as a list of dictionaries(sub-objects)
-        dict_list[i]["fields"] = [{}]   # TODO: assuming process no is
-                                        #       always 1. will fix later
-        #   set "pno" field to 5th element
-        dict_list[i]["fields"][0]["pno"] = entries[index][0][5]
+        #  turn sets into sorted lists so sub-objects in the fields list of the
+        #  json output is also ordered
+        pno_sets[i] = sorted(pno_sets[i])
+        #  initialize "fields" value as a list of dictionaries(sub-objects),
+        #  set the "pno" values at the initialization
+        dict_list[i]["fields"] = [{"pno": pno} for pno in pno_sets[i]]
+        
         #   this inner loop scans all possible field-names and checks if any of 
         #   these names exist in the current object. All field-values are 
         #   initialized as null and changed later if enountered in the current 
         #   object
         for fname in fnames:
-            #   initialize field-value as null
-            dict_list[i]["fields"][0][fname] = None
+            #   initialize field-values as null for each pno
+            for pno in range(len(dict_list[i]["fields"])):
+                dict_list[i]["fields"][pno][fname] = None
             #   scan whole object for matching field-name
             for j in range(obj_start_indexes[i+1]-obj_start_indexes[i]):
-                #   if found, set the field-value accordingly
+                #  if found, set the field-value accordingly
                 if fname == entries[index+j][0][4]:
-                    dict_list[i]["fields"][0][fname] = entries[index+j][3]
+                    pno = int(entries[index+j][0][5])-1
+                    dict_list[i]["fields"][pno][fname] = entries[index+j][3]
                 #   else, leave null
     #   turn json style formated dict_list into a json string
     json_str = json.dumps(dict_list, indent=2)
