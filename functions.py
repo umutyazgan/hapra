@@ -42,10 +42,10 @@ def parse_stat(data, csv_data):
     fnames = csv_data[2:].splitlines()[0].split(',')
     #   remove newline character at the end of typed output string
     data = data[:-1]
-    #   return empty list in case of "No such proxy" response.
+    #   return null in case of "No such proxy" response.
     #   TODO(?): Maybe return a differen HTTP status code?
     if data == 'No such proxy.\n':
-        return json.dumps([], indent=2)
+        return json.dumps(None, indent=2)
     #   remove empty field at the end of fnames list
     fnames = fnames[:-1]
     #   initial values for identifiers(first three parts of the first column of
@@ -147,6 +147,8 @@ def parse_stat(data, csv_data):
 def parse_env(data):
     """Parse HAProxy environment variables into JSON format"""
     data = data[:-1]
+    if data == "Variable not found\n":
+        return json.dumps(None, indent=2)
     entries=data.splitlines()
     env_dict = {}
     for entry in entries:
