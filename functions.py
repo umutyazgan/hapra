@@ -73,7 +73,7 @@ def parse_stat(data, csv_data):
     #   It also stores starting/ending positions of these objects in a list.
     for index, entry in enumerate(entries):
         #   split entries into sub-lists
-        entries[index] = entries[index].split(':')
+        entries[index] = entries[index].split(':', 3)
         entries[index][0] = entries[index][0].split('.')
         #   check if identifiers have changed
         identifiers = entries[index][0][:3]
@@ -152,6 +152,6 @@ def parse_env(data):
     entries=data.splitlines()
     env_dict = {}
     for entry in entries:
-        entry = entry.split('=',1)
+        entry = entry.split('=', 1)
         env_dict[entry[0]]=entry[1]
     return json.dumps(env_dict, indent=2)
