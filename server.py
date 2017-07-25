@@ -18,8 +18,15 @@ def show_stat():
     iid = request.args.get('iid')
     t   = request.args.get('type')
     sid = request.args.get('sid')
-    (data, csv_data) = get_stat(iid, t, sid)
+    (data, csv_data) = get_output('show stat ', iid, t, sid)
     return parse_stat(data, csv_data)
+
+@app.route('/hapra/show/env', methods=['GET'])
+def show_env():
+    """Return output of "show env" socket command as a JSON string"""
+    name = request.args.get('name')
+    data = get_output('show env ', name)
+    return parse_env(data)
 
 if __name__ == '__main__':
     app.run(debug=True)
