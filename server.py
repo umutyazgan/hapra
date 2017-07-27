@@ -18,15 +18,27 @@ def show_stat():
     iid = request.args.get('iid')
     t   = request.args.get('type')
     sid = request.args.get('sid')
-    (data, csv_data) = get_output('show stat ', iid, t, sid)
-    return parse_stat(data, csv_data)
+    s = stat('show stat ', iid, t, sid)
+    return s.jsonify()
 
 @app.route('/hapra/show/env', methods=['GET'])
 def show_env():
     """Return output of "show env" socket command as a JSON string"""
     name = request.args.get('name')
-    data = get_output('show env ', name)
-    return parse_env(data)
+    e = env('show env ', name)
+    return e.jsonify()
+
+@app.route('/hapra/show/sess', methods=['GET'])
+def show_sess():
+    """Return output of "show sess" socket command as a JSON string """
+    data = get_output('show sess ')
+    return parse_sess(data)
+
+@app.route('/hapra/show/sess/<sess_id>', methods=['GET'])
+def show_sess_id(sess_id):
+    """Return output of "show sess <id>" socket command as a JSON string """
+    data = get_output('show sess {} '.format(sess_id))
+    return parse_sess_id(data)
 
 if __name__ == '__main__':
     app.run(debug=True)
