@@ -163,13 +163,23 @@ class stat(socket_command):
         #   turn json style formated dict_list into a json string
         return json.dumps(dict_list, indent=2)
 
-def parse_sess(data):
-    """Parse session information into JSON format"""
-    data = data[:-1]
-    entries = data.splitlines()
-    for index, entry in enumerate(entries):
-        entries[index] = entries[index].split(' ')
-#  TODO: combine these two into a single func
-def parse_sess_id(data):
-    """Parse session information into JSON format"""
-    pass
+class backend(socket_command):
+    def jsonify(self):
+        data = self.data[:-1]
+        data = data.splitlines()
+        del data[0]
+        be_dict = {}
+        for i, line in enumerate(data):
+            be_dict[i] = line
+        return json.dumps(be_dict, indent=2)
+
+#def parse_sess(data):
+#    """Parse session information into JSON format"""
+#    data = data[:-1]
+#    entries = data.splitlines()
+#    for index, entry in enumerate(entries):
+#        entries[index] = entries[index].split(' ')
+##  TODO: combine these two into a single func
+#def parse_sess_id(data):
+#    """Parse session information into JSON format"""
+#    pass

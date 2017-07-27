@@ -28,17 +28,23 @@ def show_env():
     e = env('show env ', name)
     return e.jsonify()
 
-@app.route('/hapra/show/sess', methods=['GET'])
-def show_sess():
-    """Return output of "show sess" socket command as a JSON string """
-    data = get_output('show sess ')
-    return parse_sess(data)
+@app.route('/hapra/show/backend', methods=['GET'])
+def show_backend():
+    """Return output of "show backend" socket command as a JSON string """
+    b = backend('show backend ')
+    return b.jsonify()
 
-@app.route('/hapra/show/sess/<sess_id>', methods=['GET'])
-def show_sess_id(sess_id):
-    """Return output of "show sess <id>" socket command as a JSON string """
-    data = get_output('show sess {} '.format(sess_id))
-    return parse_sess_id(data)
+#@app.route('/hapra/show/sess', methods=['GET'])
+#def show_sess():
+#    """Return output of "show sess" socket command as a JSON string """
+#    data = get_output('show sess ')
+#    return parse_sess(data)
+
+#@app.route('/hapra/show/sess/<sess_id>', methods=['GET'])
+#def show_sess_id(sess_id):
+#    """Return output of "show sess <id>" socket command as a JSON string """
+#    data = get_output('show sess {} '.format(sess_id))
+#    return parse_sess_id(data)
 
 if __name__ == '__main__':
     app.run(debug=True)

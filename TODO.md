@@ -6,7 +6,7 @@ Starting with `show <...>` commands, all Unix Socket commands will be implemente
 - [x] `show env [<name>]`
 - [ ] `show stat resolvers [<resolvers section id>]`
 - [ ] `show errors [<iid>]`
-- [ ] `show backend`
+- [x] `show backend`
 - [ ] `show info`
 - [ ] `show map [<map>]`
 - [ ] `show acl [<acl>]`
