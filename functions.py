@@ -173,6 +173,45 @@ class backend(socket_command):
             be_dict[i] = line
         return json.dumps(be_dict, indent=2)
 
+class info(socket_command):
+    def __init__(self, *args):
+        """Return HAProxy info in typed format with specified parameters"""
+        arg_count = len(locals()['args'])
+        #   socket initialization/connection
+        sock = socket.socket(socket.AF_UNIX, socket.SOCK_STREAM)
+        sock.connect(server_address)
+        command_string = args[0]
+        for i in range(1, arg_count):
+            if args[i] is not None:
+                command_string += (args[i] + ' ')
+        command_string += ' typed '
+        command_string += '\n'
+        sock.send(command_string.encode('utf-8'))
+        #   receive answer from socket
+        #   TODO: get rid of fixed message size(16384)
+        self.data = sock.recv(16384).decode('utf-8')
+        sock.close()
+    def jsonify(self, *args):
+        entries = self.data[:-1]
+        entries = entries.splitlines()
+        dict_list = []
+        for index, entry in enumerate(entries):
+            entries[index] = entries[index].split(':',3)
+            entries[index][0] = entries[index][0].split('.')
+            if len(dict_list) == 0:
+                dict_list.append({'pno': entries[index][0][2]})
+            for d in dict_list:
+                if d['pno'] == entries[index][0][2]:
+                    d[entries[index][0][1]] = entries[index][3]
+                    pno_found = True
+                    break
+                else:
+                    pno_found = False
+            if pno_found is False:
+                dict_list.append({'pno': entries[index][0][2],
+                                  entries[index][0][1]: entries[index][3]})
+        return json.dumps(dict_list,indent=2)
+
 #def parse_sess(data):
 #    """Parse session information into JSON format"""
 #    data = data[:-1]

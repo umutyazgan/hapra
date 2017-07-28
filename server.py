@@ -34,6 +34,12 @@ def show_backend():
     b = backend('show backend ')
     return b.jsonify()
 
+@app.route('/hapra/show/info', methods=['GET'])
+def show_info():
+    """Return output of "show info typed" socket command as a JSON string """
+    i = info('show info ')
+    return i.jsonify()
+
 #@app.route('/hapra/show/sess', methods=['GET'])
 #def show_sess():
 #    """Return output of "show sess" socket command as a JSON string """
