@@ -30,15 +30,22 @@ def show_env():
 
 @app.route('/hapra/show/backend', methods=['GET'])
 def show_backend():
-    """Return output of "show backend" socket command as a JSON string """
+    """Return output of "show backend" socket command as a JSON string"""
     b = backend('show backend ')
     return b.jsonify()
 
 @app.route('/hapra/show/info', methods=['GET'])
 def show_info():
-    """Return output of "show info typed" socket command as a JSON string """
+    """Return output of "show info typed" socket command as a JSON string"""
     i = info('show info ')
     return i.jsonify()
+
+@app.route('/hapra/show/servers-state', methods=['GET'])
+def show_servers_state():
+    """Return output of "show servers state" socket command as a JSON string"""
+    backend = request.args.get('backend')
+    ss = servers_state('show servers state ', backend)
+    return ss.jsonify()
 
 #@app.route('/hapra/show/sess', methods=['GET'])
 #def show_sess():

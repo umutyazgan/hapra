@@ -11,7 +11,7 @@ Starting with `show <...>` commands, all Unix Socket commands will be implemente
 - [ ] `show map [<map>]`
 - [ ] `show acl [<acl>]`
 - [ ] `show pools`
-- [ ] `show servers state [<backend>]`
+- [x] `show servers state [<backend>]`
 - [ ] `show sess`
 - [ ] `show sess <id>`
 - [ ] `show table`

@@ -212,6 +212,23 @@ class info(socket_command):
                                   entries[index][0][1]: entries[index][3]})
         return json.dumps(dict_list,indent=2)
 
+class servers_state(socket_command):
+    def jsonify(self):
+        """Parse HAProxy servers state into JSON format"""
+        lines = self.data[:-1]
+        if lines == "Can't find backend.\n":
+            return json.dumps(None, indent=2)
+        lines = lines.splitlines()
+        del lines[0]
+        for index, line in enumerate(lines):
+            lines[index] = lines[index].split(' ')
+        del lines[0][0]
+        dict_list = []
+        for index in range(1,len(lines)):
+            dict_list.append(dict(zip(lines[0],lines[index])))
+        return json.dumps(dict_list,indent=2)
+            
+
 #def parse_sess(data):
 #    """Parse session information into JSON format"""
 #    data = data[:-1]
