@@ -47,6 +47,13 @@ def show_servers_state():
     ss = servers_state('show servers state ', backend)
     return ss.jsonify()
 
+@app.route('/hapra/show/pools', methods=['GET'])
+def show_pools():
+    """Return output of "show pools" socket command as a JSON string"""
+    p = pools('show pools ')
+    return p.jsonify()
+
+
 #@app.route('/hapra/show/sess', methods=['GET'])
 #def show_sess():
 #    """Return output of "show sess" socket command as a JSON string """

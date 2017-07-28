@@ -228,6 +228,35 @@ class servers_state(socket_command):
             dict_list.append(dict(zip(lines[0],lines[index])))
         return json.dumps(dict_list,indent=2)
             
+class pools(socket_command):
+    def jsonify(self):
+        """Parse HAProxy pools into JSON format"""
+        lines = self.data[:-1]
+        lines = lines.splitlines()
+        del lines[0]
+        total = lines.pop().split(' ')
+        dict_list = []
+        for index, line in enumerate(lines):
+            line = lines[index].split(' ')
+            dict_list.append({})
+            dict_list[index]['name'] = line[4]
+            dict_list[index]['bytes'] = line[5][1:]
+            dict_list[index]['allocated'] = line[8]
+            dict_list[index]['allocated bytes'] = line[10][1:]
+            dict_list[index]['used'] = line[12]
+            dict_list[index]['failure'] = line[14]
+            dict_list[index]['users'] = line[16]
+            if '[SHARED]' in line:
+                dict_list[index]['shared'] = True
+            else:
+                dict_list[index]['shared'] = False
+        pool_dict = {
+            'pools'                 :dict_list,
+            'total pools'           :total[1],
+            'total bytes allocated' :total[3],
+            'total bytes used'      :total[6]
+        }
+        return json.dumps(pool_dict, indent=2)
 
 #def parse_sess(data):
 #    """Parse session information into JSON format"""
