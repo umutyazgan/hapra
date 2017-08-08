@@ -53,6 +53,11 @@ def show_pools():
     p = pools('show pools ')
     return p.jsonify()
 
+@app.route('/hapra/show/table', methods=['GET'])
+def show_table():
+    """Return output of "show table" socket command as a JSON string"""
+    t = table('show table ')
+    return t.jsonify()
 
 #@app.route('/hapra/show/sess', methods=['GET'])
 #def show_sess():

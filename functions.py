@@ -258,6 +258,20 @@ class pools(socket_command):
         }
         return json.dumps(pool_dict, indent=2)
 
+class table(socket_command):
+    def jsonify(self):
+        """Parse HAProxy table into JSON format"""
+        lines = self.data[:-1].splitlines()
+        dict_list = []
+        for line in lines:
+            line = line.split(' ')
+            print(line)
+            dict_list.append(dict([('table', line[2][:-1]),
+                                   ('type' , line[4][:-1]),
+                                   ('size' , line[5].split(':')[1][:-1]),
+                                   ('used' , line[6].split(':')[1])]))
+        return json.dumps(dict_list, indent=2)
+        
 #def parse_sess(data):
 #    """Parse session information into JSON format"""
 #    data = data[:-1]

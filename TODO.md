@@ -1,62 +1,6 @@
-TODO:
-=====
-Starting with `show <...>` commands, all Unix Socket commands will be implemented.
-
-- [x] `show stat [<iid> <type> <sid>]`
-- [x] `show env [<name>]`
-- [ ] `show stat resolvers [<resolvers section id>]`
-- [ ] `show errors [<iid>]`
-- [x] `show backend`
-- [x] `show info`
-- [ ] `show map [<map>]`
-- [ ] `show acl [<acl>]`
-- [ ] `show pools`
-- [x] `show servers state [<backend>]`
-- [ ] `show sess`
-- [ ] `show sess <id>`
-- [ ] `show table`
-- [ ] `show table <name> [ data.<type> <operator> <value> ] | [ key <key> ]`
-- [ ] `show tls-keys`
-- [ ] `shutdown frontend <frontend>`
-- [ ] `shutdown session <id>`
-- [ ] `shutdown sessions server <backend>/<server>`
-- [ ] `add acl <acl> <pattern>`
-- [ ] `add map <map> <key> <value>`
-- [ ] `clear counters`
-- [ ] `clear counters all`
-- [ ] `clear acl <acl>`
-- [ ] `clear map <map>`
-- [ ] `clear table <table> [ data.<type> <operator> <value> ] | [ key <key> ]`
-- [ ] `del acl <acl> [<key>|#<ref>]`
-- [ ] `del map <map> [<key>|#<ref>]`
-- [ ] `disable agent <backend>/<server>`
-- [ ] `disable frontend <frontend>`
-- [ ] `disable health <backend>/<server>`
-- [ ] `disable server <backend>/<server>`
-- [ ] `enable agent <backend>/<server>`
-- [ ] `enable frontend <frontend>`
-- [ ] `enable health <backend>/<server>`
-- [ ] `enable server <backend>/<server>`
-- [ ] `get map <map> <value>`
-- [ ] `get acl <acl> <value>`
-- [ ] `get weight <backend>/<server>`
-- [ ] `help`
-- [ ] `prompt`
-- [ ] `quit`
-- [ ] `set map <map> [<key>|#<ref>] <value>`
-- [ ] `set maxconn frontend <frontend> <value>`
-- [ ] `set maxconn global <maxconn>`
-- [ ] `set rate-limit connections global <value>`
-- [ ] `set rate-limit http-compression global <value>`
-- [ ] `set rate-limit sessions global <value>`
-- [ ] `set rate-limit ssl-sessions global <value>`
-- [ ] `set server <backend>/<server> addr <ip4 or ip6 address>`
-- [ ] `set server <backend>/<server> agent [ up | down ]`
-- [ ] `set server <backend>/<server> health [ up | stopping | down ]`
-- [ ] `set server <backend>/<server> state [ ready | drain | maint ]`
-- [ ] `set server <backend>/<server> weight <weight>[%]`
-- [ ] `set ssl ocsp-response <response>`
-- [ ] `set ssl tls-key <id> <tlskey>`
-- [ ] `set table <table> key <key> [data.<data_type> <value>]*`
-- [ ] `set timeout cli <delay>`
-- [ ] `set weight <backend>/<server> <weight>[%]`
+[ ] Need to generate some kind of error in order to implement `show errors` command
+[ ] All `map` and `acl` commands will be implemented later
+[ ] Outputs of `show sess` and `show sess <id>` commands are difficult to parse into JSON. Going to deal with them later.
+[ ] Need resolvers in config file in order to implement `show stat resolvers` command
+[ ] `show table` command works but takes no parameters and hasn't been tested with different tables.
+[ ] Need to set up TLS keys in order to implement `show tls-keys` command
