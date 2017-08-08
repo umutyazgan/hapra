@@ -10,11 +10,11 @@ Starting with `show <...>` commands, all Unix Socket commands will be implemente
 - [x] `show info`
 - [ ] `show map [<map>]`
 - [ ] `show acl [<acl>]`
-- [ ] `show pools`
+- [x] `show pools`
 - [x] `show servers state [<backend>]`
 - [ ] `show sess`
 - [ ] `show sess <id>`
-- [ ] `show table`
+- [x] `show table`
 - [ ] `show table <name> [ data.<type> <operator> <value> ] | [ key <key> ]`
 - [ ] `show tls-keys`
 - [ ] `shutdown frontend <frontend>`
