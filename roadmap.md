@@ -1,4 +1,4 @@
-TODO:
+Roadmap:
 =====
 Starting with `show <...>` commands, all Unix Socket commands will be implemented.
 
