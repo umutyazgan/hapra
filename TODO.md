@@ -1,3 +1,5 @@
+TODO:
+=====
  - [ ] Need to generate some kind of error in order to implement `show errors` command
  - [ ] All `map` and `acl` commands will be implemented later
  - [ ] Outputs of `show sess` and `show sess <id>` commands are difficult to parse into JSON. Going to deal with them later.
