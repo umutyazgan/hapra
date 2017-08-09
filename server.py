@@ -78,5 +78,12 @@ def shutdown_frontend():
     sf = shut_frontend('shutdown frontend ', frontend)
     return sf.jsonify()
 
+@app.route('/hapra/shutdown/session', methods=['GET'])
+def shutdown_session():
+    """Shutdown frontend precified by name or id"""
+    session = request.args.get('session')
+    ss = shut_session('shutdown session ', session)
+    return ss.jsonify()
+
 if __name__ == '__main__':
     app.run(debug=True)
