@@ -19,7 +19,7 @@ Starting with `show <...>` commands, all Unix Socket commands will be implemente
 - [ ] `show tls-keys`
 - [x] `shutdown frontend <frontend>`
 - [x] `shutdown session <id>`
-- [ ] `shutdown sessions server <backend>/<server>`
+- [x] `shutdown sessions server <backend>/<server>`
 - [ ] `add acl <acl> <pattern>`
 - [ ] `add map <map> <key> <value>`
 - [ ] `clear counters`

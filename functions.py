@@ -17,6 +17,7 @@ class socket_command(object):
             if args[i] is not None:
                 command_string += (args[i] + ' ')
         command_string += '\n'
+        print(command_string)
         sock.send(command_string.encode('utf-8'))
         #   receive answer from socket
         #   TODO: get rid of fixed message size(16384)
@@ -323,5 +324,29 @@ class shut_session(socket_command):
             r = {'status':'success','code':'200'}
             return json.dumps(r, indent=2), 200
         else:
+            r = {'status':'unknown','code':'500'}
+            return json.dumps(r, indent=2), 500
+
+class shut_sessions_server(socket_command):
+    def jsonify(self):
+        """Parse output of 'shutdown sessions server' command into JSON format"""
+        message = self.data[:-1]
+        if message == 'Permission denied\n':
+            r = {'status':'failed','code':'500','error':message[:-1]}
+            return json.dumps(r, indent=2), 500
+        elif message == "No such server.\n":
+            r = {'status':'failed','code':'404','error':message[:-1]}
+            return json.dumps(r, indent=2), 404
+        elif message == "No such backend.\n":
+            r = {'status':'failed','code':'404','error':message[:-1]}
+            return json.dumps(r, indent=2), 404
+        elif message == "Require 'backend/server'.\n":
+            r = {'status':'failed','code':'400','error':message[:-1]}
+            return json.dumps(r, indent=2), 400
+        elif message == '':
+            r = {'status':'success','code':'200'}
+            return json.dumps(r, indent=2), 200
+        else:
+            print(message)
             r = {'status':'unknown','code':'500'}
             return json.dumps(r, indent=2), 500
