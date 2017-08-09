@@ -282,3 +282,23 @@ class table(socket_command):
 #def parse_sess_id(data):
 #    """Parse session information into JSON format"""
 #    pass
+
+class shut_frontend(socket_command):
+    def jsonify(self):
+        """Parse output of 'shutdown frontend' command into JSON format"""
+        message = self.data[:-1]
+        if message == 'Permission denied\n':
+            r = {'status':'failed','code':'500','error':message[:-1]}
+            return json.dumps(r, indent=2), 500
+        elif message == 'No such frontend.\n':
+            r = {'status':'failed','code':'404','error':message[:-1]}
+            return json.dumps(r, indent=2), 404
+        elif message == 'Frontend was already shut down.\n':
+            r = {'status':'failed','code':'404','error':message[:-1]}
+            return json.dumps(r, indent=2), 404
+        elif message == '':
+            r = {'status':'success','code':'200'}
+            return json.dumps(r, indent=2), 200
+        else:
+            r = {'status':'unknown','code':'500'}
+            return json.dumps(r, indent=2), 500

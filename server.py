@@ -71,5 +71,12 @@ def show_table():
 #    data = get_output('show sess {} '.format(sess_id))
 #    return parse_sess_id(data)
 
+@app.route('/hapra/shutdown/frontend', methods=['GET'])
+def shutdown_frontend():
+    """Shutdown frontend precified by name or id"""
+    frontend = request.args.get('frontend')
+    sf = shut_frontend('shutdown frontend ', frontend)
+    return sf.jsonify()
+
 if __name__ == '__main__':
     app.run(debug=True)

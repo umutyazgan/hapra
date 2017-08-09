@@ -17,7 +17,7 @@ Starting with `show <...>` commands, all Unix Socket commands will be implemente
 - [x] `show table`
 - [ ] `show table <name> [ data.<type> <operator> <value> ] | [ key <key> ]`
 - [ ] `show tls-keys`
-- [ ] `shutdown frontend <frontend>`
+- [x] `shutdown frontend <frontend>`
 - [ ] `shutdown session <id>`
 - [ ] `shutdown sessions server <backend>/<server>`
 - [ ] `add acl <acl> <pattern>`
