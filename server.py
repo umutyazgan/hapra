@@ -117,5 +117,85 @@ def clear_table():
     ct = ctable('clear table ', table)
     return ct.jsonify()
 
+@app.route('/hapra/disable/agent', methods=['GET'])
+def disable_agent():
+    """Mark the auxiliary agent check as temporarily stopped."""
+    backend = request.args.get('backend')
+    server = request.args.get('server')
+    if backend and server:
+        da = dis_agent('disable agent ', backend + '/' + server)
+    else:
+        da = dis_agent('disable agent ')
+    return da.jsonify()
+
+@app.route('/hapra/disable/frontend', methods=['GET'])
+def disable_frontend():
+    """Mark the frontend as temporarily stopped."""
+    frontend = request.args.get('frontend')
+    df = dis_frontend('disable frontend ', frontend)
+    return df.jsonify()
+
+@app.route('/hapra/disable/health', methods=['GET'])
+def disable_health():
+    """Mark the auxiliary health check as temporarily stopped."""
+    backend = request.args.get('backend')
+    server = request.args.get('server')
+    if backend and server:
+        dh = dis_health('disable health ', backend + '/' + server)
+    else:
+        dh = dis_health('disable health ')
+    return dh.jsonify()
+
+@app.route('/hapra/disable/server', methods=['GET'])
+def disable_server():
+    """Mark the server DOWN for maintenance."""
+    backend = request.args.get('backend')
+    server = request.args.get('server')
+    if backend and server:
+        ds = dis_server('disable server ', backend + '/' + server)
+    else:
+        ds = dis_server('disable server ')
+    return ds.jsonify()
+
+@app.route('/hapra/enable/agent', methods=['GET'])
+def enable_agent():
+    """Resume auxiliary agent check that was temporarily stopped."""
+    backend = request.args.get('backend')
+    server = request.args.get('server')
+    if backend and server:
+        ea = en_agent('enable agent ', backend + '/' + server)
+    else:
+        ea = en_agent('enable agent ')
+    return ea.jsonify()
+
+@app.route('/hapra/enable/frontend', methods=['GET'])
+def enable_frontend():
+    """Resume a frontend which was temporarily stopped."""
+    frontend = request.args.get('frontend')
+    ef = en_frontend('enable frontend ', frontend)
+    return ef.jsonify()
+
+@app.route('/hapra/enable/health', methods=['GET'])
+def enable_health():
+    """Resume a primary health check that was temporarily stopped."""
+    backend = request.args.get('backend')
+    server = request.args.get('server')
+    if backend and server:
+        eh = en_health('enable health ', backend + '/' + server)
+    else:
+        eh = en_health('enable health ')
+    return eh.jsonify()
+
+@app.route('/hapra/enable/server', methods=['GET'])
+def enable_server():
+    """Mark the server UP."""
+    backend = request.args.get('backend')
+    server = request.args.get('server')
+    if backend and server:
+        es = en_server('enable server ', backend + '/' + server)
+    else:
+        es = en_server('enable server ')
+    return es.jsonify()
+
 if __name__ == '__main__':
     app.run(debug=True)

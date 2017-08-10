@@ -29,14 +29,14 @@ Starting with `show <...>` commands, all Unix Socket commands will be implemente
 - [x] `clear table <table> [ data.<type> <operator> <value> ] | [ key <key> ]`
 - [ ] `del acl <acl> [<key>|#<ref>]`
 - [ ] `del map <map> [<key>|#<ref>]`
-- [ ] `disable agent <backend>/<server>`
-- [ ] `disable frontend <frontend>`
-- [ ] `disable health <backend>/<server>`
-- [ ] `disable server <backend>/<server>`
-- [ ] `enable agent <backend>/<server>`
-- [ ] `enable frontend <frontend>`
-- [ ] `enable health <backend>/<server>`
-- [ ] `enable server <backend>/<server>`
+- [x] `disable agent <backend>/<server>`
+- [x] `disable frontend <frontend>`
+- [x] `disable health <backend>/<server>`
+- [x] `disable server <backend>/<server>`
+- [x] `enable agent <backend>/<server>`
+- [x] `enable frontend <frontend>`
+- [x] `enable health <backend>/<server>`
+- [x] `enable server <backend>/<server>`
 - [ ] `get map <map> <value>`
 - [ ] `get acl <acl> <value>`
 - [ ] `get weight <backend>/<server>`

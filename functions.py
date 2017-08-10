@@ -391,3 +391,191 @@ class ctable(socket_command):
         else:
             r = {'status':'unknown','code':'500'}
             return json.dumps(r, indent=2), 500
+
+class dis_agent(socket_command):
+    def jsonify(self):
+        """Parse output of 'disable agent' command into JSON format"""
+        message = self.data[:-1]
+        if message == 'Permission denied\n':
+            r = {'status':'failed','code':'500','error':message[:-1]}
+            return json.dumps(r, indent=2), 500
+        elif message == "No such server.\n":
+            r = {'status':'failed','code':'404','error':message[:-1]}
+            return json.dumps(r, indent=2), 404
+        elif message == "No such backend.\n":
+            r = {'status':'failed','code':'404','error':message[:-1]}
+            return json.dumps(r, indent=2), 404
+        elif message == "Require 'backend/server'.\n":
+            r = {'status':'failed','code':'400','error':message[:-1]}
+            return json.dumps(r, indent=2), 400
+        elif message == '':
+            r = {'status':'success','code':'200'}
+            return json.dumps(r, indent=2), 200
+        else:
+            r = {'status':'unknown','code':'500'}
+            return json.dumps(r, indent=2), 500
+
+class dis_frontend(socket_command):
+    def jsonify(self):
+        """Parse output of 'disable frontend' command into JSON format"""
+        message = self.data[:-1]
+        if message == 'Permission denied\n':
+            r = {'status':'failed','code':'500','error':message[:-1]}
+            return json.dumps(r, indent=2), 500
+        elif message == 'No such frontend.\n':
+            r = {'status':'failed','code':'404','error':message[:-1]}
+            return json.dumps(r, indent=2), 404
+        elif message == 'Frontend is already disabled.\n':
+            r = {'status':'failed','code':'404','error':message[:-1]}
+            return json.dumps(r, indent=2), 404
+        elif message == 'A frontend name is expected.\n':
+            r = {'status':'failed','code':'400','error':message[:-1]}
+            return json.dumps(r, indent=2), 400
+        elif message == '':
+            r = {'status':'success','code':'200'}
+            return json.dumps(r, indent=2), 200
+        else:
+            r = {'status':'unknown','code':'500'}
+            return json.dumps(r, indent=2), 500
+
+class dis_health(socket_command):
+    def jsonify(self):
+        """Parse output of 'disable health' command into JSON format"""
+        message = self.data[:-1]
+        if message == 'Permission denied\n':
+            r = {'status':'failed','code':'500','error':message[:-1]}
+            return json.dumps(r, indent=2), 500
+        elif message == "No such server.\n":
+            r = {'status':'failed','code':'404','error':message[:-1]}
+            return json.dumps(r, indent=2), 404
+        elif message == "No such backend.\n":
+            r = {'status':'failed','code':'404','error':message[:-1]}
+            return json.dumps(r, indent=2), 404
+        elif message == "Require 'backend/server'.\n":
+            r = {'status':'failed','code':'400','error':message[:-1]}
+            return json.dumps(r, indent=2), 400
+        elif message == '':
+            r = {'status':'success','code':'200'}
+            return json.dumps(r, indent=2), 200
+        else:
+            r = {'status':'unknown','code':'500'}
+            return json.dumps(r, indent=2), 500
+
+class dis_server(socket_command):
+    def jsonify(self):
+        """Parse output of 'disable server' command into JSON format"""
+        message = self.data[:-1]
+        if message == 'Permission denied\n':
+            r = {'status':'failed','code':'500','error':message[:-1]}
+            return json.dumps(r, indent=2), 500
+        elif message == "No such server.\n":
+            r = {'status':'failed','code':'404','error':message[:-1]}
+            return json.dumps(r, indent=2), 404
+        elif message == "No such backend.\n":
+            r = {'status':'failed','code':'404','error':message[:-1]}
+            return json.dumps(r, indent=2), 404
+        elif message == "Require 'backend/server'.\n":
+            r = {'status':'failed','code':'400','error':message[:-1]}
+            return json.dumps(r, indent=2), 400
+        elif message == '':
+            r = {'status':'success','code':'200'}
+            return json.dumps(r, indent=2), 200
+        else:
+            r = {'status':'unknown','code':'500'}
+            return json.dumps(r, indent=2), 500
+
+class en_agent(socket_command):
+    def jsonify(self):
+        """Parse output of 'enable agent' command into JSON format"""
+        message = self.data[:-1]
+        if message == 'Permission denied\n':
+            r = {'status':'failed','code':'500','error':message[:-1]}
+            return json.dumps(r, indent=2), 500
+        elif message == "No such server.\n":
+            r = {'status':'failed','code':'404','error':message[:-1]}
+            return json.dumps(r, indent=2), 404
+        elif message == "No such backend.\n":
+            r = {'status':'failed','code':'404','error':message[:-1]}
+            return json.dumps(r, indent=2), 404
+        elif message == "Require 'backend/server'.\n":
+            r = {'status':'failed','code':'400','error':message[:-1]}
+            return json.dumps(r, indent=2), 400
+        elif message == "Agent was not configured on this server, "\
+                        "cannot enable.\n":
+            r = {'status':'failed','code':'500','error':message[:-1]}
+            return json.dumps(r, indent=2), 500
+        elif message == '':
+            r = {'status':'success','code':'200'}
+            return json.dumps(r, indent=2), 200
+        else:
+            r = {'status':'unknown','code':'500'}
+            return json.dumps(r, indent=2), 500
+
+class en_frontend(socket_command):
+    def jsonify(self):
+        """Parse output of 'enable frontend' command into JSON format"""
+        message = self.data[:-1]
+        if message == 'Permission denied\n':
+            r = {'status':'failed','code':'500','error':message[:-1]}
+            return json.dumps(r, indent=2), 500
+        elif message == 'No such frontend.\n':
+            r = {'status':'failed','code':'404','error':message[:-1]}
+            return json.dumps(r, indent=2), 404
+        elif message == 'Frontend is already enabled.\n':
+            r = {'status':'failed','code':'404','error':message[:-1]}
+            return json.dumps(r, indent=2), 404
+        elif message == 'A frontend name is expected.\n':
+            r = {'status':'failed','code':'400','error':message[:-1]}
+            return json.dumps(r, indent=2), 400
+        elif message == '':
+            r = {'status':'success','code':'200'}
+            return json.dumps(r, indent=2), 200
+        else:
+            r = {'status':'unknown','code':'500'}
+            return json.dumps(r, indent=2), 500
+
+class en_health(socket_command):
+    def jsonify(self):
+        """Parse output of 'enable health' command into JSON format"""
+        message = self.data[:-1]
+        if message == 'Permission denied\n':
+            r = {'status':'failed','code':'500','error':message[:-1]}
+            return json.dumps(r, indent=2), 500
+        elif message == "No such server.\n":
+            r = {'status':'failed','code':'404','error':message[:-1]}
+            return json.dumps(r, indent=2), 404
+        elif message == "No such backend.\n":
+            r = {'status':'failed','code':'404','error':message[:-1]}
+            return json.dumps(r, indent=2), 404
+        elif message == "Require 'backend/server'.\n":
+            r = {'status':'failed','code':'400','error':message[:-1]}
+            return json.dumps(r, indent=2), 400
+        elif message == '':
+            r = {'status':'success','code':'200'}
+            return json.dumps(r, indent=2), 200
+        else:
+            r = {'status':'unknown','code':'500'}
+            return json.dumps(r, indent=2), 500
+
+class en_server(socket_command):
+    def jsonify(self):
+        """Parse output of 'enable server' command into JSON format"""
+        message = self.data[:-1]
+        if message == 'Permission denied\n':
+            r = {'status':'failed','code':'500','error':message[:-1]}
+            return json.dumps(r, indent=2), 500
+        elif message == "No such server.\n":
+            r = {'status':'failed','code':'404','error':message[:-1]}
+            return json.dumps(r, indent=2), 404
+        elif message == "No such backend.\n":
+            r = {'status':'failed','code':'404','error':message[:-1]}
+            return json.dumps(r, indent=2), 404
+        elif message == "Require 'backend/server'.\n":
+            r = {'status':'failed','code':'400','error':message[:-1]}
+            return json.dumps(r, indent=2), 400
+        elif message == '':
+            r = {'status':'success','code':'200'}
+            return json.dumps(r, indent=2), 200
+        else:
+            r = {'status':'unknown','code':'500'}
+            return json.dumps(r, indent=2), 500
