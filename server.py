@@ -97,5 +97,25 @@ def shutdown_sessions_server():
         sss = shut_sessions_server('shutdown sessions server ')
     return sss.jsonify()
 
+@app.route('/hapra/clear/counters', methods=['GET'])
+def clear_counters():
+    """Clear the max values of the statistics counters in each proxy/server"""
+    cc = ccounters('clear counters ')
+    return cc.jsonify()
+
+@app.route('/hapra/clear/counters-all', methods=['GET'])
+def clear_counters_all():
+    """Clear all statistics counters in each proxy/server"""
+    cca = ccounters_all('clear counters all ')
+    return cca.jsonify()
+
+#  TODO: Add remaining parameters
+@app.route('/hapra/clear/table', methods=['GET'])
+def clear_table():
+    """Remove entries from the stick-table <table>."""
+    table = request.args.get('table')
+    ct = ctable('clear table ', table)
+    return ct.jsonify()
+
 if __name__ == '__main__':
     app.run(debug=True)

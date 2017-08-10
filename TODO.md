@@ -1,5 +1,6 @@
 TODO:
 =====
+ - [ ] Add command line parameters other than table name for `clear table` command
  - [ ] `shutdown session <session>` and `shutdown sessions server <backend/server>` does not seem to shutdown anything even though shutdown command is correct.
  - [ ] Add error handling mechanisms and HTTP status codes.
  - [ ] Need to generate some kind of error in order to implement `show errors` command

@@ -1,5 +1,6 @@
 import socket
 import json
+import difflib
 
 #   Socket location. May be different depending on the system.
 #   TODO: make socket location independent from the system
@@ -17,7 +18,6 @@ class socket_command(object):
             if args[i] is not None:
                 command_string += (args[i] + ' ')
         command_string += '\n'
-        print(command_string)
         sock.send(command_string.encode('utf-8'))
         #   receive answer from socket
         #   TODO: get rid of fixed message size(16384)
@@ -266,7 +266,6 @@ class table(socket_command):
         dict_list = []
         for line in lines:
             line = line.split(' ')
-            print(line)
             dict_list.append(dict([('table', line[2][:-1]),
                                    ('type' , line[4][:-1]),
                                    ('size' , line[5].split(':')[1][:-1]),
@@ -347,6 +346,48 @@ class shut_sessions_server(socket_command):
             r = {'status':'success','code':'200'}
             return json.dumps(r, indent=2), 200
         else:
-            print(message)
+            r = {'status':'unknown','code':'500'}
+            return json.dumps(r, indent=2), 500
+
+class ccounters(socket_command):
+    def jsonify(self):
+        """Parse output of 'clear counters' command into JSON format"""
+        message = self.data[:-1]
+        if message == '':
+            r = {'status':'success','code':'200'}
+            return json.dumps(r, indent=2), 200
+        else:
+            r = {'status':'unknown','code':'500'}
+            return json.dumps(r, indent=2), 500
+
+class ccounters_all(socket_command):
+    def jsonify(self):
+        """Parse output of 'clear counters all' command into JSON format"""
+        message = self.data[:-1]
+        if message == 'Permission denied\n':
+            r = {'status':'failed','code':'500','error':message[:-1]}
+            return json.dumps(r, indent=2), 500
+        elif message == '':
+            r = {'status':'success','code':'200'}
+            return json.dumps(r, indent=2), 200
+        else:
+            r = {'status':'unknown','code':'500'}
+            return json.dumps(r, indent=2), 500
+
+class ctable(socket_command):
+    def jsonify(self):
+        """Parse output of 'clear table' command into JSON format"""
+        message = self.data[:-1]
+        if message == 'Required arguments: <table> "data.<store_data_type>" '\
+                      '<operator> <value> or <table> key <key>\n':
+            r = {'status':'failed','code':'400','error':message[:-1]}
+            return json.dumps(r, indent=2), 400
+        elif message == "No such table\n":
+            r = {'status':'failed','code':'404','error':message[:-1]}
+            return json.dumps(r, indent=2), 404
+        elif message == '':
+            r = {'status':'success','code':'200'}
+            return json.dumps(r, indent=2), 200
+        else:
             r = {'status':'unknown','code':'500'}
             return json.dumps(r, indent=2), 500
