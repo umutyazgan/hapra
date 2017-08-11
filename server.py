@@ -197,5 +197,22 @@ def enable_server():
         es = en_server('enable server ')
     return es.jsonify()
 
+@app.route('/hapra/get/weight', methods=['GET'])
+def get_weight():
+    """Report the current weight and the initial weight of <server>."""
+    backend = request.args.get('backend')
+    server = request.args.get('server')
+    if backend and server:
+        gw = g_weight('get weight ', backend + '/' + server)
+    else:
+        gw = g_weight('get weight')
+    return gw.jsonify()
+
+@app.route('/hapra/help', methods=['GET'])
+def help():
+    """Print the list of known keywords and their basic usage."""
+    h = hp('help')
+    return h.jsonify()
+
 if __name__ == '__main__':
     app.run(debug=True)

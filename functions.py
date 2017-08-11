@@ -579,3 +579,39 @@ class en_server(socket_command):
         else:
             r = {'status':'unknown','code':'500'}
             return json.dumps(r, indent=2), 500
+
+class g_weight(socket_command):
+    def jsonify(self):
+        """Parse output of 'get weight' command into JSON format"""
+        message = self.data[:-1]
+        if message == 'Permission denied\n':
+            r = {'status':'failed','code':'500','error':message[:-1]}
+            return json.dumps(r, indent=2), 500
+        elif message == "No such server.\n":
+            r = {'status':'failed','code':'404','error':message[:-1]}
+            return json.dumps(r, indent=2), 404
+        elif message == "No such backend.\n":
+            r = {'status':'failed','code':'404','error':message[:-1]}
+            return json.dumps(r, indent=2), 404
+        elif message == "Require 'backend/server'.\n":
+            r = {'status':'failed','code':'400','error':message[:-1]}
+            return json.dumps(r, indent=2), 400
+        else:
+            l = message.split()
+            r = {'weight':l[0], 'initial':l[2][0]}
+            return json.dumps(r, indent=2), 500
+
+class hp(socket_command):
+    def jsonify(self):
+        """Parse output of 'help' command into JSON format"""
+        message = self.data[:-1]
+        lines = message.splitlines()
+        del lines[0]
+        #  TODO: indexes are hardcoded, make this independent from indexes
+        lines[41] += ' ' + lines[42].strip()
+        del lines[42]
+        d = {}
+        for index, line in enumerate(lines):
+            pair = line.split(':')
+            d[pair[0].strip()] = pair[1].strip()
+        return json.dumps(d, indent=2)

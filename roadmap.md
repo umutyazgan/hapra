@@ -37,10 +37,10 @@ Starting with `show <...>` commands, all Unix Socket commands will be implemente
 - [x] `enable frontend <frontend>`
 - [x] `enable health <backend>/<server>`
 - [x] `enable server <backend>/<server>`
-- [ ] `get map <map> <value>`
+- [x] `get map <map> <value>`
 - [ ] `get acl <acl> <value>`
 - [ ] `get weight <backend>/<server>`
-- [ ] `help`
+- [x] `help`
 - [ ] `prompt`
 - [ ] `quit`
 - [ ] `set map <map> [<key>|#<ref>] <value>`
