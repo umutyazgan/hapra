@@ -1,5 +1,6 @@
 TODO:
 =====
+ - [ ] Add necessary command string restrictions
  - [ ] Actually, everything needs a tone of testing.
  - [ ] Add command line parameters other than table name for `clear table` command
  - [ ] `shutdown session <session>` and `shutdown sessions server <backend/server>` does not seem to shutdown anything even though shutdown command is correct.

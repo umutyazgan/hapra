@@ -39,24 +39,24 @@ Starting with `show <...>` commands, all Unix Socket commands will be implemente
 - [x] `enable server <backend>/<server>`
 - [x] `get map <map> <value>`
 - [ ] `get acl <acl> <value>`
-- [ ] `get weight <backend>/<server>`
+- [x] `get weight <backend>/<server>`
 - [x] `help`
 - [ ] `prompt`
 - [ ] `quit`
 - [ ] `set map <map> [<key>|#<ref>] <value>`
-- [ ] `set maxconn frontend <frontend> <value>`
-- [ ] `set maxconn global <maxconn>`
-- [ ] `set rate-limit connections global <value>`
-- [ ] `set rate-limit http-compression global <value>`
-- [ ] `set rate-limit sessions global <value>`
-- [ ] `set rate-limit ssl-sessions global <value>`
-- [ ] `set server <backend>/<server> addr <ip4 or ip6 address>`
+- [x] `set maxconn frontend <frontend> <value>`
+- [x] `set maxconn global <maxconn>`
+- [x] `set rate-limit connections global <value>`
+- [x] `set rate-limit http-compression global <value>`
+- [x] `set rate-limit sessions global <value>`
+- [x] `set rate-limit ssl-sessions global <value>`
+- [x] `set server <backend>/<server> addr <ip4 or ip6 address>`
 - [ ] `set server <backend>/<server> agent [ up | down ]`
-- [ ] `set server <backend>/<server> health [ up | stopping | down ]`
-- [ ] `set server <backend>/<server> state [ ready | drain | maint ]`
-- [ ] `set server <backend>/<server> weight <weight>[%]`
+- [x] `set server <backend>/<server> health [ up | stopping | down ]`
+- [x] `set server <backend>/<server> state [ ready | drain | maint ]`
+- [x] `set server <backend>/<server> weight <weight>[%]`
 - [ ] `set ssl ocsp-response <response>`
 - [ ] `set ssl tls-key <id> <tlskey>`
 - [ ] `set table <table> key <key> [data.<data_type> <value>]*`
 - [ ] `set timeout cli <delay>`
-- [ ] `set weight <backend>/<server> <weight>[%]`
+- [x] `set weight <backend>/<server> <weight>[%]`

@@ -13,6 +13,7 @@ class socket_command(object):
         #   socket initialization/connection
         sock = socket.socket(socket.AF_UNIX, socket.SOCK_STREAM)
         sock.connect(server_address)
+        #  TODO: Do not allow ';' character inside command strings
         command_string = args[0]
         for i in range(1, arg_count):
             if args[i] is not None:
@@ -615,3 +616,317 @@ class hp(socket_command):
             pair = line.split(':')
             d[pair[0].strip()] = pair[1].strip()
         return json.dumps(d, indent=2)
+
+class s_maxconn_frontend(socket_command):
+    def jsonify(self):
+        """Parse output of 'set maxconn frontend' command into JSON format"""
+        message = self.data[:-1]
+        if message == 'Permission denied\n':
+            r = {'status':'failed','code':'500','error':message[:-1]}
+            return json.dumps(r, indent=2), 500
+        elif message == 'No such frontend.\n':
+            r = {'status':'failed','code':'404','error':message[:-1]}
+            return json.dumps(r, indent=2), 404
+        elif message == 'A frontend name is expected.\n':
+            r = {'status':'failed','code':'400','error':message[:-1]}
+            return json.dumps(r, indent=2), 400
+        elif message == 'Integer value expected.\n':
+            r = {'status':'failed','code':'400','error':message[:-1]}
+            return json.dumps(r, indent=2), 400
+        elif message == 'Value out of range.\n':
+            r = {'status':'failed','code':'400','error':message[:-1]}
+            return json.dumps(r, indent=2), 400
+        elif message == '':
+            r = {'status':'success','code':'200'}
+            return json.dumps(r, indent=2), 200
+        else:
+            r = {'status':'unknown','code':'500'}
+            return json.dumps(r, indent=2), 500
+
+class s_maxconn_server(socket_command):
+    def jsonify(self):
+        """Parse output of 'set maxconn server' command into JSON format"""
+        message = self.data[:-1]
+        if message == 'Permission denied\n':
+            r = {'status':'failed','code':'500','error':message[:-1]}
+            return json.dumps(r, indent=2), 500
+        elif message == "No such server.\n":
+            r = {'status':'failed','code':'404','error':message[:-1]}
+            return json.dumps(r, indent=2), 404
+        elif message == "No such backend.\n":
+            r = {'status':'failed','code':'404','error':message[:-1]}
+            return json.dumps(r, indent=2), 404
+        elif message == "Require 'backend/server'.\n":
+            r = {'status':'failed','code':'400','error':message[:-1]}
+            return json.dumps(r, indent=2), 400
+        elif message == 'Require <maxconn>.\n':
+            r = {'status':'failed','code':'400','error':message[:-1]}
+            return json.dumps(r, indent=2), 400
+        elif message == 'maxconn string empty or preceded by garbage':
+            r = {'status':'failed','code':'400','error':message}
+            return json.dumps(r, indent=2), 400
+        elif message == '':
+            r = {'status':'success','code':'200'}
+            return json.dumps(r, indent=2), 200
+        else:
+            r = {'status':'unknown','code':'500'}
+            return json.dumps(r, indent=2), 500
+
+class s_maxconn_global(socket_command):
+    def jsonify(self):
+        """Parse output of 'set maxconn global' command into JSON format"""
+        message = self.data[:-1]
+        if message == 'Permission denied\n':
+            r = {'status':'failed','code':'500','error':message[:-1]}
+            return json.dumps(r, indent=2), 500
+        elif message == 'Expects an integer value.\n':
+            r = {'status':'failed','code':'400','error':message[:-1]}
+            return json.dumps(r, indent=2), 400
+        elif message == '':
+            r = {'status':'success','code':'200'}
+            return json.dumps(r, indent=2), 200
+        else:
+            r = {'status':'unknown','code':'500'}
+            return json.dumps(r, indent=2), 500
+
+class s_ratelimit_connections_global(socket_command):
+    def jsonify(self):
+        """Parse output of 'set rate-limit connections global' command into 
+            JSON format"""
+        message = self.data[:-1]
+        if message == 'Permission denied\n':
+            r = {'status':'failed','code':'500','error':message[:-1]}
+            return json.dumps(r, indent=2), 500
+        elif message == 'Expects an integer value.\n':
+            r = {'status':'failed','code':'400','error':message[:-1]}
+            return json.dumps(r, indent=2), 400
+        elif message == 'Value out of range.\n':
+            r = {'status':'failed','code':'400','error':message[:-1]}
+            return json.dumps(r, indent=2), 400
+        elif message == '':
+            r = {'status':'success','code':'200'}
+            return json.dumps(r, indent=2), 200
+        else:
+            r = {'status':'unknown','code':'500'}
+            return json.dumps(r, indent=2), 500
+
+class s_ratelimit_httpcompression_global(socket_command):
+    def jsonify(self):
+        """Parse output of 'set rate-limit http-compression global' command 
+            into JSON format"""
+        message = self.data[:-1]
+        if message == 'Permission denied\n':
+            r = {'status':'failed','code':'500','error':message[:-1]}
+            return json.dumps(r, indent=2), 500
+        elif message == 'Expects an integer value.\n':
+            r = {'status':'failed','code':'400','error':message[:-1]}
+            return json.dumps(r, indent=2), 400
+        elif message == 'Value out of range.\n':
+            r = {'status':'failed','code':'400','error':message[:-1]}
+            return json.dumps(r, indent=2), 400
+        elif message == '':
+            r = {'status':'success','code':'200'}
+            return json.dumps(r, indent=2), 200
+        else:
+            r = {'status':'unknown','code':'500'}
+            return json.dumps(r, indent=2), 500
+
+class s_ratelimit_sessions_global(socket_command):
+    def jsonify(self):
+        """Parse output of 'set rate-limit sessions global' command into 
+            JSON format"""
+        message = self.data[:-1]
+        if message == 'Permission denied\n':
+            r = {'status':'failed','code':'500','error':message[:-1]}
+            return json.dumps(r, indent=2), 500
+        elif message == 'Expects an integer value.\n':
+            r = {'status':'failed','code':'400','error':message[:-1]}
+            return json.dumps(r, indent=2), 400
+        elif message == 'Value out of range.\n':
+            r = {'status':'failed','code':'400','error':message[:-1]}
+            return json.dumps(r, indent=2), 400
+        elif message == '':
+            r = {'status':'success','code':'200'}
+            return json.dumps(r, indent=2), 200
+        else:
+            r = {'status':'unknown','code':'500'}
+            return json.dumps(r, indent=2), 500
+
+class s_ratelimit_sslsessions_global(socket_command):
+    def jsonify(self):
+        """Parse output of 'set rate-limit ssl-sessions global' command into 
+            JSON format"""
+        message = self.data[:-1]
+        if message == 'Permission denied\n':
+            r = {'status':'failed','code':'500','error':message[:-1]}
+            return json.dumps(r, indent=2), 500
+        elif message == 'Expects an integer value.\n':
+            r = {'status':'failed','code':'400','error':message[:-1]}
+            return json.dumps(r, indent=2), 400
+        elif message == 'Value out of range.\n':
+            r = {'status':'failed','code':'400','error':message[:-1]}
+            return json.dumps(r, indent=2), 400
+        elif message == '':
+            r = {'status':'success','code':'200'}
+            return json.dumps(r, indent=2), 200
+        else:
+            r = {'status':'unknown','code':'500'}
+            return json.dumps(r, indent=2), 500
+
+class s_server_addr(socket_command):
+    def jsonify(self):
+        """Parse output of 'set server addr' command into JSON format"""
+        message = self.data[:-1]
+        status_code = ''
+        failed = True
+        if message == 'Permission denied\n':
+            status_code = '500'
+        elif message == "No such server.\n":
+            status_code = '404'
+        elif message == "No such backend.\n":
+            status_code = '404'
+        elif message == "Require 'backend/server'.\n":
+            status_code = '400'
+        elif 'requires an address' in message:
+            status_code = '400'
+        elif 'Invalid addr' in message:
+            status_code = '400'
+        elif 'problem converting' in message:
+            status_code = '400'
+        elif "can't change <port>" in message:
+            status_code = '500'
+        elif 'no need to change the port' in message:
+            status_code = '200'
+            failed = False
+        elif 'no need to change the addr' in message:
+            status_code = '200'
+            failed = False
+        elif 'IP changed' in message:
+            status_code = '200'
+            failed = False
+        elif 'port changed' in message:
+            status_code = '200'
+            failed = False
+        else:
+            status_code = '500'
+        response = {'status':'failure','code':status_code,'message':message[:-1]}
+        if not failed:
+            response['status'] = 'success'
+        return json.dumps(response, indent=2), int(status_code)
+
+#  TODO: 'set server agent'
+
+class s_server_health(socket_command):
+    def jsonify(self):
+        """Parse output of 'set server health' command into JSON format"""
+        message = self.data[:-1]
+        status_code = ''
+        failed = True
+        if message == 'Permission denied\n':
+            status_code = '500'
+        elif message == "No such server.\n":
+            status_code = '404'
+        elif message == "No such backend.\n":
+            status_code = '404'
+        elif message == "Require 'backend/server'.\n":
+            status_code = '400'
+        elif "expects 'up', 'stopping', or 'down'" in message:
+            status_code = '400'
+        elif message == '':
+            status_code = '200'
+            failed = False
+        else:
+            status_code = '500'
+        response = {'status':'failure','code':status_code,'message':message[:-1]}
+        if not failed:
+            response['status'] = 'success'
+        return json.dumps(response, indent=2), int(status_code)
+
+class s_server_checkport(socket_command):
+    def jsonify(self):
+        """Parse output of 'set server check-port' command into JSON format"""
+        message = self.data[:-1]
+        status_code = ''
+        failed = True
+        print(message)
+        if message == 'Permission denied\n':
+            status_code = '500'
+        elif message == "No such server.\n":
+            status_code = '404'
+        elif message == "No such backend.\n":
+            status_code = '404'
+        elif message == "Require 'backend/server'.\n":
+            status_code = '400'
+        elif message == 'health check port updated.\n':
+            status_code = '200'
+            failed = False
+        else:
+            status_code = '500'
+        response = {'status':'failure','code':status_code,'message':message[:-1]}
+        if not failed:
+            response['status'] = 'success'
+        return json.dumps(response, indent=2), int(status_code)
+
+class s_server_state(socket_command):
+    def jsonify(self):
+        """Parse output of 'set server state' command into JSON format"""
+        message = self.data[:-1]
+        status_code = ''
+        failed = True
+        if message == 'Permission denied\n':
+            status_code = '500'
+        elif message == 'No such server.\n':
+            status_code = '404'
+        elif message == 'No such backend.\n':
+            status_code = '404'
+        elif message == "Require 'backend/server'.\n":
+            status_code = '400'
+        elif "expects 'ready', 'drain' and 'maint'" in message:
+            status_code = '400'
+        elif message == '':
+            status_code = '200'
+            failed = False
+        else:
+            status_code = '500'
+        response = {'status':'failure','code':status_code,'message':message[:-1]}
+        if not failed:
+            response['status'] = 'success'
+        return json.dumps(response, indent=2), int(status_code)
+
+class s_server_weight(socket_command):
+    def jsonify(self):
+        """Parse output of 'set server weight' command into JSON format"""
+        message = self.data[:-1]
+        status_code = ''
+        failed = True
+        if message == 'Permission denied\n':
+            status_code = '500'
+            message = message[:-1]
+        elif message == 'No such server.\n':
+            status_code = '404'
+            message = message[:-1]
+        elif message == 'No such backend.\n':
+            status_code = '404'
+            message = message[:-1]
+        elif message == "Require 'backend/server'.\n":
+            status_code = '400'
+            message = message[:-1]
+        elif 'can only be between 0 and 256 inclusive.' in message:
+            status_code = '400'
+            message = message[:-1]
+        elif message == 'Require <weight> or <weight%>.\n':
+            status_code = '400'
+            message = message[:-1]
+        elif message == 'Empty weight string empty or preceded by garbage':
+            status_code = '400'
+        elif message == 'Trailing garbage in weight string':
+            status_code = '400'
+        elif message == '':
+            status_code = '200'
+            failed = False
+        else:
+            status_code = '500'
+        response = {'status':'failure','code':status_code,'message':message}
+        if not failed:
+            response['status'] = 'success'
+        return json.dumps(response, indent=2), int(status_code)

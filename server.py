@@ -103,7 +103,7 @@ def clear_counters():
     cc = ccounters('clear counters ')
     return cc.jsonify()
 
-@app.route('/hapra/clear/counters-all', methods=['GET'])
+@app.route('/hapra/clear/counters/all', methods=['GET'])
 def clear_counters_all():
     """Clear all statistics counters in each proxy/server"""
     cca = ccounters_all('clear counters all ')
@@ -213,6 +213,149 @@ def help():
     """Print the list of known keywords and their basic usage."""
     h = hp('help')
     return h.jsonify()
+
+@app.route('/hapra/set/maxconn/frontend', methods=['GET'])
+def set_maxconn_frontend():
+    """Dynamically change the specified frontend's maxconn setting."""
+    frontend = request.args.get('frontend')
+    value = request.args.get('value')
+    smf = s_maxconn_frontend('set maxconn frontend ', frontend, value)
+    return smf.jsonify()
+
+#  TODO: prevent negative values
+@app.route('/hapra/set/maxconn/server', methods=['GET'])
+def set_maxconn_server():
+    """Dynamically change the specified server's maxconn setting."""
+    backend = request.args.get('backend')
+    server = request.args.get('server')
+    value = request.args.get('value')
+    if backend and server:
+        sms = s_maxconn_server('set maxconn server ', 
+                               backend + '/' + server, value)
+    else:
+        sms = s_maxconn_server('set maxconn server ', value)
+    return sms.jsonify()
+
+@app.route('/hapra/set/maxconn/global', methods=['GET'])
+def set_maxconn_global():
+    """Dynamically change the global maxconn setting."""
+    value = request.args.get('value')
+    smg = s_maxconn_global('set maxconn global ', value)
+    return smg.jsonify()
+
+@app.route('/hapra/set/rate-limit/connections/global', methods=['GET'])
+def set_ratelimit_connections_global():
+    """Change the process-wide connection rate limit."""
+    value = request.args.get('value')
+    srcg = s_ratelimit_connections_global('set rate-limit connections global ',
+                                          value)
+    return srcg.jsonify()
+
+@app.route('/hapra/set/rate-limit/http-compression/global', methods=['GET'])
+def set_ratelimit_httpcompression_global():
+    """Change the maximum input compression rate."""
+    value = request.args.get('value')
+    srhg = s_ratelimit_httpcompression_global(
+           'set rate-limit http-compression global ', value)
+    return srhg.jsonify()
+
+@app.route('/hapra/set/rate-limit/sessions/global', methods=['GET'])
+def set_ratelimit_sessions_global():
+    """Change the process-wide session rate limit."""
+    value = request.args.get('value')
+    srsg = s_ratelimit_sessions_global('set rate-limit sessions global ',
+                                          value)
+    return srsg.jsonify()
+
+@app.route('/hapra/set/rate-limit/ssl-sessions/global', methods=['GET'])
+def set_ratelimit_sslsessions_global():
+    """Change the process-wide SSL session rate limit."""
+    value = request.args.get('value')
+    srsg = s_ratelimit_sslsessions_global('set rate-limit ssl-sessions global ',
+                                          value)
+    return srsg.jsonify()
+
+@app.route('/hapra/set/server/addr', methods=['GET'])
+def set_server_addr():
+    """Replace the current IP address of a server by the one provided."""
+    backend = request.args.get('backend')
+    server = request.args.get('server')
+    ip = request.args.get('ip')
+    port = request.args.get('port')
+    if backend and server and port:
+        ssa = s_server_addr('set server ', backend + '/' + server, 'addr', ip,
+                            'port', port)
+    elif backend and server:
+        ssa = s_server_addr('set server ', backend + '/' + server, 'addr', ip)
+    elif port:
+        ssa = s_server_addr('set server ', 'addr', ip, 'port', port)
+    else:
+        ssa = s_server_addr('set server ', 'addr', ip)
+    return ssa.jsonify()
+
+@app.route('/hapra/set/server/health', methods=['GET'])
+def set_server_health():
+    """Force a server's health to a new state."""
+    backend = request.args.get('backend')
+    server = request.args.get('server')
+    state = request.args.get('state')
+    if backend and server:
+        ssh = s_server_health('set server ', backend + '/' + server, 'health',
+                                state)
+    else:
+        ssh = s_server_health('set server ', 'health', state)
+    return ssh.jsonify()
+
+@app.route('/hapra/set/server/check-port', methods=['GET'])
+def set_server_checkport():
+    """Change the port used for health checking to <port>."""
+    backend = request.args.get('backend')
+    server = request.args.get('server')
+    port = request.args.get('port')
+    if backend and server:
+        ssc = s_server_checkport('set server ', backend + '/' + server, 
+                                'check-port', port)
+    else:
+        ssc = s_server_checkport('set server ', 'check-port', port)
+    return ssc.jsonify()
+
+@app.route('/hapra/set/server/state', methods=['GET'])
+def set_server_state():
+    """Force a server's administrative state to a new state."""
+    backend = request.args.get('backend')
+    server = request.args.get('server')
+    state = request.args.get('state')
+    if backend and server:
+        sss = s_server_state('set server ', backend + '/' + server, 
+                                'state', state)
+    else:
+        sss = s_server_state('set server ', 'state', state)
+    return sss.jsonify()
+
+@app.route('/hapra/set/server/weight', methods=['GET'])
+def set_server_weight():
+    """Change a server's weight to the value passed in argument."""
+    backend = request.args.get('backend')
+    server = request.args.get('server')
+    weight = request.args.get('weight')
+    if backend and server:
+        ssw = s_server_weight('set server ', backend + '/' + server, 
+                                'weight', weight)
+    else:
+        ssw = s_server_weight('set server ', 'weight', weight)
+    return ssw.jsonify()
+
+@app.route('/hapra/set/weight', methods=['GET'])
+def set_weight():
+    """Change a server's weight to the value passed in argument."""
+    backend = request.args.get('backend')
+    server = request.args.get('server')
+    weight = request.args.get('weight')
+    if backend and server:
+        sw = s_server_weight('set weight ', backend + '/' + server, weight)
+    else:
+        sw = s_server_weight('set weight ', weight)
+    return sw.jsonify()
 
 if __name__ == '__main__':
     app.run(debug=True)
