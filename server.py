@@ -357,5 +357,20 @@ def set_weight():
         sw = s_server_weight('set weight ', weight)
     return sw.jsonify()
 
+@app.route('/hapra/add/acl', methods=['GET'])
+def add_acl():
+    """Add an entry into the acl <acl>."""
+    acl = request.args.get('acl')
+    pattern = request.args.get('pattern')
+    aa = a_acl('add acl ', acl, pattern)
+    return aa.jsonify()
+
+@app.route('/hapra/clear/acl', methods=['GET'])
+def clear_acl():
+    """Remove all entries from the acl <acl>."""
+    acl = request.args.get('acl')
+    ca = c_acl('clear acl ', acl)
+    return ca.jsonify()
+
 if __name__ == '__main__':
     app.run(debug=True)

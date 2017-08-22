@@ -1,6 +1,5 @@
 import socket
 import json
-import difflib
 
 #   Socket location. May be different depending on the system.
 #   TODO: make socket location independent from the system
@@ -921,6 +920,50 @@ class s_server_weight(socket_command):
             status_code = '400'
         elif message == 'Trailing garbage in weight string':
             status_code = '400'
+        elif message == '':
+            status_code = '200'
+            failed = False
+        else:
+            status_code = '500'
+        response = {'status':'failure','code':status_code,'message':message}
+        if not failed:
+            response['status'] = 'success'
+        return json.dumps(response, indent=2), int(status_code)
+
+class a_acl(socket_command):
+    def jsonify(self):
+        """Parse output of 'add acl' command into JSON format"""
+        message = self.data[:-1]
+        status_code = ''
+        failed = True
+        if message == "'add acl' expects two parameters: ACL identifier and pattern.\n":
+            status_code = '400'
+            message = message[:-1]
+        elif message == 'Unknown ACL identifier. Please use #<id> or <file>.\n':
+            status_code = '404'
+            message = message[:-1]
+        elif message == '':
+            status_code = '200'
+            failed = False
+        else:
+            status_code = '500'
+        response = {'status':'failure','code':status_code,'message':message}
+        if not failed:
+            response['status'] = 'success'
+        return json.dumps(response, indent=2), int(status_code)
+
+class c_acl(socket_command):
+    def jsonify(self):
+        """Parse output of 'add acl' command into JSON format"""
+        message = self.data[:-1]
+        status_code = ''
+        failed = True
+        if message == 'Missing ACL identifier.\n':
+            status_code = '400'
+            message = message[:-1]
+        elif message == 'Unknown ACL identifier. Please use #<id> or <file>.\n':
+            status_code = '404'
+            message = message[:-1]
         elif message == '':
             status_code = '200'
             failed = False

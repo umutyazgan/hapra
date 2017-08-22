@@ -20,11 +20,11 @@ Starting with `show <...>` commands, all Unix Socket commands will be implemente
 - [x] `shutdown frontend <frontend>`
 - [x] `shutdown session <id>`
 - [x] `shutdown sessions server <backend>/<server>`
-- [ ] `add acl <acl> <pattern>`
+- [x] `add acl <acl> <pattern>`
 - [ ] `add map <map> <key> <value>`
 - [x] `clear counters`
 - [x] `clear counters all`
-- [ ] `clear acl <acl>`
+- [x] `clear acl <acl>`
 - [ ] `clear map <map>`
 - [x] `clear table <table> [ data.<type> <operator> <value> ] | [ key <key> ]`
 - [ ] `del acl <acl> [<key>|#<ref>]`
