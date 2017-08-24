@@ -372,5 +372,30 @@ def clear_acl():
     ca = c_acl('clear acl ', acl)
     return ca.jsonify()
 
+@app.route('/hapra/del/acl', methods=['GET'])
+def del_acl():
+    """Delete all the acl entries from the acl <acl> corresponding to the key 
+        <key>."""
+    acl = request.args.get('acl')
+    key = request.args.get('key')
+    da = d_acl('del acl ', acl, key)
+    return da.jsonify()
+
+@app.route('/hapra/get/acl', methods=['GET'])
+def get_acl():
+    """Lookup the value <value> in the in the ACL <acl>."""
+    acl = request.args.get('acl')
+    value = request.args.get('value')
+    ga = g_acl('get acl ', acl, value)
+    return ga.jsonify()
+
+#  TODO: test this
+@app.route('/hapra/show/acl', methods=['GET'])
+def show_acl():
+    """Dump info about acl converters."""
+    acl = request.args.get('acl')
+    sa = s_acl('show acl ', acl)
+    return sa.jsonify()
+
 if __name__ == '__main__':
     app.run(debug=True)

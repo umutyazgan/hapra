@@ -1,5 +1,6 @@
 TODO:
 =====
+ - [ ] Do not omit `(file)` part of the string when parsing output of `show acl`
  - [ ] Add necessary command string restrictions
  - [ ] Actually, everything needs a tone of testing.
  - [ ] Add command line parameters other than table name for `clear table` command

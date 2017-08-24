@@ -9,7 +9,7 @@ Starting with `show <...>` commands, all Unix Socket commands will be implemente
 - [x] `show backend`
 - [x] `show info`
 - [ ] `show map [<map>]`
-- [ ] `show acl [<acl>]`
+- [x] `show acl [<acl>]`
 - [x] `show pools`
 - [x] `show servers state [<backend>]`
 - [ ] `show sess`
@@ -27,7 +27,7 @@ Starting with `show <...>` commands, all Unix Socket commands will be implemente
 - [x] `clear acl <acl>`
 - [ ] `clear map <map>`
 - [x] `clear table <table> [ data.<type> <operator> <value> ] | [ key <key> ]`
-- [ ] `del acl <acl> [<key>|#<ref>]`
+- [x] `del acl <acl> [<key>|#<ref>]`
 - [ ] `del map <map> [<key>|#<ref>]`
 - [x] `disable agent <backend>/<server>`
 - [x] `disable frontend <frontend>`
@@ -37,8 +37,8 @@ Starting with `show <...>` commands, all Unix Socket commands will be implemente
 - [x] `enable frontend <frontend>`
 - [x] `enable health <backend>/<server>`
 - [x] `enable server <backend>/<server>`
-- [x] `get map <map> <value>`
-- [ ] `get acl <acl> <value>`
+- [ ] `get map <map> <value>`
+- [x] `get acl <acl> <value>`
 - [x] `get weight <backend>/<server>`
 - [x] `help`
 - [ ] `prompt`

@@ -973,3 +973,88 @@ class c_acl(socket_command):
         if not failed:
             response['status'] = 'success'
         return json.dumps(response, indent=2), int(status_code)
+
+class d_acl(socket_command):
+    def jsonify(self):
+        """Parse output of 'del acl' command into JSON format"""
+        message = self.data[:-1]
+        status_code = ''
+        failed = True
+        if 'This command expects two parameters:' in message:
+            status_code = '400'
+            message = message[:-1]
+        elif message == 'Unknown map identifier. Please use #<id> or <file>.\n':
+            status_code = '404'
+            message = message[:-1]
+        elif message == 'Key not found.\n':
+            status_code = '404'
+            message = message[:-1]
+        elif message == '':
+            status_code = '200'
+            failed = False
+        else:
+            status_code = '500'
+        response = {'status':'failure','code':status_code,'message':message}
+        if not failed:
+            response['status'] = 'success'
+        return json.dumps(response, indent=2), int(status_code)
+
+class g_acl(socket_command):
+    def jsonify(self):
+        """Parse output of 'get acl' command into JSON format"""
+        message = self.data[:-1]
+        status_code = ''
+        failed = True
+        if message == 'Missing ACL identifier and/or key.\n':
+            status_code = '400'
+            message = message[:-1]
+        elif message == 'Unknown ACL identifier. Please use #<id> or <file>.\n':
+            status_code = '404'
+            message = message[:-1]
+        else:
+            failed = False
+            status_code = '200'
+            pairs = message[:-1].split(', ')
+            d = {}
+            for pair in pairs:
+                pair = pair.split('=')
+                d[pair[0]] = pair[1]
+        if failed:
+            response = {'status':'failure','code':status_code,'message':message}
+        else:
+            response = {'status':'success','code':status_code,'response':d}
+        return json.dumps(response, indent=2), int(status_code)
+
+class s_acl(socket_command):
+    def jsonify(self):
+        """Parse output of 'show acl' command into JSON format"""
+        message = self.data[:-1]
+        status_code = ''
+        failed = True
+        if message == 'Unknown ACL identifier. Please use #<id> or <file>.\n':
+            status_code = '404'
+            message = message[:-1]
+        elif message[0] == '#':
+            failed = False
+            status_code = '200'
+            lines = message[:-1].splitlines()
+            del lines[0]
+            d = {}
+            for line in lines:
+                #  TODO: this omits (file) part of line.
+                line = line.split(' () ')
+                d[line[0]] = line[1]
+            response = {'status':'success','code':status_code,'response':d}
+        else:
+            failed = False
+            status_code = '200'
+            lines = message[:-1].splitlines()
+            d = {}
+            for line in lines:
+                line = line.split(' ')
+                d[line[0]] = line[1]
+        if failed:
+            response = {'status':'failure','code':status_code,'message':message}
+        else:
+            response = {'status':'success','code':status_code,'response':d}
+        return json.dumps(response, indent=2), int(status_code)
