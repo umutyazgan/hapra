@@ -1,5 +1,6 @@
 TODO:
 =====
+ - [ ] Handle usage of `;` in command parameters
  - [ ] Do not omit `(file)` part of the string when parsing output of `show acl`
  - [ ] Add necessary command string restrictions
  - [ ] Actually, everything needs a tone of testing.

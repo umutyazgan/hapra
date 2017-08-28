@@ -8,7 +8,7 @@ Starting with `show <...>` commands, all Unix Socket commands will be implemente
 - [ ] `show errors [<iid>]`
 - [x] `show backend`
 - [x] `show info`
-- [ ] `show map [<map>]`
+- [x] `show map [<map>]`
 - [x] `show acl [<acl>]`
 - [x] `show pools`
 - [x] `show servers state [<backend>]`
@@ -21,14 +21,14 @@ Starting with `show <...>` commands, all Unix Socket commands will be implemente
 - [x] `shutdown session <id>`
 - [x] `shutdown sessions server <backend>/<server>`
 - [x] `add acl <acl> <pattern>`
-- [ ] `add map <map> <key> <value>`
+- [x] `add map <map> <key> <value>`
 - [x] `clear counters`
 - [x] `clear counters all`
 - [x] `clear acl <acl>`
-- [ ] `clear map <map>`
+- [x] `clear map <map>`
 - [x] `clear table <table> [ data.<type> <operator> <value> ] | [ key <key> ]`
 - [x] `del acl <acl> [<key>|#<ref>]`
-- [ ] `del map <map> [<key>|#<ref>]`
+- [x] `del map <map> [<key>|#<ref>]`
 - [x] `disable agent <backend>/<server>`
 - [x] `disable frontend <frontend>`
 - [x] `disable health <backend>/<server>`
@@ -37,13 +37,13 @@ Starting with `show <...>` commands, all Unix Socket commands will be implemente
 - [x] `enable frontend <frontend>`
 - [x] `enable health <backend>/<server>`
 - [x] `enable server <backend>/<server>`
-- [ ] `get map <map> <value>`
+- [x] `get map <map> <value>`
 - [x] `get acl <acl> <value>`
 - [x] `get weight <backend>/<server>`
 - [x] `help`
 - [ ] `prompt`
 - [ ] `quit`
-- [ ] `set map <map> [<key>|#<ref>] <value>`
+- [x] `set map <map> [<key>|#<ref>] <value>`
 - [x] `set maxconn frontend <frontend> <value>`
 - [x] `set maxconn global <maxconn>`
 - [x] `set rate-limit connections global <value>`

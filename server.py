@@ -1,6 +1,9 @@
 #!../flask/bin/python
 
-#   TODO: this application needs root privileges to run. Make it work without it.
+#  TODO: this application needs root privileges to run. Make it work without it.
+#  TODO: this application may allow user to execute arbitrary haproxy socket
+#        commands via passing ';<command>' as parameter. Usage of ';' needs to
+#        be handled.
 
 import socket
 from flask import Flask, jsonify, abort, make_response, request, url_for
@@ -385,17 +388,68 @@ def del_acl():
 def get_acl():
     """Lookup the value <value> in the in the ACL <acl>."""
     acl = request.args.get('acl')
+    print(acl)
     value = request.args.get('value')
+    print(value)
     ga = g_acl('get acl ', acl, value)
     return ga.jsonify()
 
-#  TODO: test this
 @app.route('/hapra/show/acl', methods=['GET'])
 def show_acl():
     """Dump info about acl converters."""
     acl = request.args.get('acl')
     sa = s_acl('show acl ', acl)
     return sa.jsonify()
+
+#  TODO: map commands doesn't work with map #<id>'s.
+@app.route('/hapra/show/map', methods=['GET'])
+def show_map():
+    """Dump info about map converters."""
+    mp = request.args.get('map')
+    sm = s_map('show map ', mp)
+    return sm.jsonify()
+
+@app.route('/hapra/add/map', methods=['GET'])
+def add_map():
+    """Add an entry into the map <map>."""
+    mp = request.args.get('map')
+    key = request.args.get('key')
+    value = request.args.get('value')
+    am = a_map('add map ', mp, key, value)
+    return am.jsonify()
+
+@app.route('/hapra/clear/map', methods=['GET'])
+def clear_map():
+    """Remove all entries from the map <map>."""
+    mp = request.args.get('map')
+    cm = c_map('clear map ', mp)
+    return cm.jsonify()
+
+@app.route('/hapra/del/map', methods=['GET'])
+def del_map():
+    """Delete all the map entries from the map <map> corresponding to the key 
+        <key>."""
+    mp = request.args.get('map')
+    key = request.args.get('key')
+    dm = d_map('del map ', mp, key)
+    return dm.jsonify()
+
+@app.route('/hapra/get/map', methods=['GET'])
+def get_map():
+    """Lookup the value <value> in the in the map <map>."""
+    mp = request.args.get('map')
+    value = request.args.get('value')
+    gm = g_acl_map('get map ', mp, value)
+    return gm.jsonify()
+
+@app.route('/hapra/set/map', methods=['GET'])
+def set_map():
+    """Modify the value corresponding to each key <key> in a map <map>."""
+    mp = request.args.get('map')
+    key = request.args.get('key')
+    value = request.args.get('value')
+    sm = se_map('set map ', mp, key, value)
+    return sm.jsonify()
 
 if __name__ == '__main__':
     app.run(debug=True)

@@ -939,6 +939,9 @@ class a_acl(socket_command):
         if message == "'add acl' expects two parameters: ACL identifier and pattern.\n":
             status_code = '400'
             message = message[:-1]
+        elif 'Malformed identifier' in message:
+            status_code = '400'
+            message = message[:-1]
         elif message == 'Unknown ACL identifier. Please use #<id> or <file>.\n':
             status_code = '404'
             message = message[:-1]
@@ -954,11 +957,14 @@ class a_acl(socket_command):
 
 class c_acl(socket_command):
     def jsonify(self):
-        """Parse output of 'add acl' command into JSON format"""
+        """Parse output of 'clear acl' command into JSON format"""
         message = self.data[:-1]
         status_code = ''
         failed = True
         if message == 'Missing ACL identifier.\n':
+            status_code = '400'
+            message = message[:-1]
+        elif 'Malformed identifier' in message:
             status_code = '400'
             message = message[:-1]
         elif message == 'Unknown ACL identifier. Please use #<id> or <file>.\n':
@@ -983,6 +989,9 @@ class d_acl(socket_command):
         if 'This command expects two parameters:' in message:
             status_code = '400'
             message = message[:-1]
+        elif 'Malformed identifier' in message:
+            status_code = '400'
+            message = message[:-1]
         elif message == 'Unknown map identifier. Please use #<id> or <file>.\n':
             status_code = '404'
             message = message[:-1]
@@ -999,16 +1008,19 @@ class d_acl(socket_command):
             response['status'] = 'success'
         return json.dumps(response, indent=2), int(status_code)
 
-class g_acl(socket_command):
+class g_acl_map(socket_command):
     def jsonify(self):
-        """Parse output of 'get acl' command into JSON format"""
+        """Parse output of 'get acl/map' command into JSON format"""
         message = self.data[:-1]
         status_code = ''
         failed = True
-        if message == 'Missing ACL identifier and/or key.\n':
+        if 'identifier and/or key.' in message:
             status_code = '400'
             message = message[:-1]
-        elif message == 'Unknown ACL identifier. Please use #<id> or <file>.\n':
+        elif 'Malformed identifier' in message:
+            status_code = '400'
+            message = message[:-1]
+        elif 'Please use #<id> or <file>.' in message:
             status_code = '404'
             message = message[:-1]
         else:
@@ -1018,6 +1030,8 @@ class g_acl(socket_command):
             d = {}
             for pair in pairs:
                 pair = pair.split('=')
+                if pair[1][0] == '"':    #  trim the quotes if they exist
+                    pair[1] = pair[1][1:-1]
                 d[pair[0]] = pair[1]
         if failed:
             response = {'status':'failure','code':status_code,'message':message}
@@ -1034,7 +1048,10 @@ class s_acl(socket_command):
         if message == 'Unknown ACL identifier. Please use #<id> or <file>.\n':
             status_code = '404'
             message = message[:-1]
-        elif message[0] == '#':
+        elif 'Malformed identifier' in message:
+            status_code = '400'
+            message = message[:-1]
+        elif message != '' and message[0] == '#':
             failed = False
             status_code = '200'
             lines = message[:-1].splitlines()
@@ -1057,4 +1074,152 @@ class s_acl(socket_command):
             response = {'status':'failure','code':status_code,'message':message}
         else:
             response = {'status':'success','code':status_code,'response':d}
+        return json.dumps(response, indent=2), int(status_code)
+
+#  TODO: use better formated JSON
+class s_map(socket_command):
+    def jsonify(self):
+        """Parse output of 'show map' command into JSON format"""
+        message = self.data[:-1]
+        status_code = ''
+        failed = True
+        if message == 'Unknown map identifier. Please use #<id> or <file>.\n':
+            status_code = '404'
+            message = message[:-1]
+        elif 'Malformed identifier' in message:
+            status_code = '400'
+            message = message[:-1]
+        elif message[0] == '#':
+            failed = False
+            status_code = '200'
+            lines = message[:-1].splitlines()
+            del lines[0]
+            d = {}
+            for line in lines:
+                #  TODO: this omits (file) part of line.
+                line = line.split(' ', 1)
+                d[line[0]] = line[1]
+            response = {'status':'success','code':status_code,'response':d}
+        else:
+            failed = False
+            status_code = '200'
+            lines = message[:-1].splitlines()
+            d = {}
+            for line in lines:
+                line = line.split(' ', 1)
+                d[line[0]] = line[1]
+        if failed:
+            response = {'status':'failure','code':status_code,'message':message}
+        else:
+            response = {'status':'success','code':status_code,'response':d}
+        return json.dumps(response, indent=2), int(status_code)
+
+class a_map(socket_command):
+    def jsonify(self):
+        """Parse output of 'add map' command into JSON format"""
+        message = self.data[:-1]
+        status_code = ''
+        failed = True
+        if "'add map' expects three parameters" in message:
+            status_code = '400'
+            message = message[:-1]
+        elif 'Malformed identifier' in message:
+            status_code = '400'
+            message = message[:-1]
+        elif message == 'Unknown map identifier. Please use #<id> or <file>.\n':
+            status_code = '404'
+            message = message[:-1]
+        elif message == '':
+            status_code = '200'
+            failed = False
+        else:
+            status_code = '500'
+        response = {'status':'failure','code':status_code,'message':message}
+        if not failed:
+            response['status'] = 'success'
+        return json.dumps(response, indent=2), int(status_code)
+
+class c_map(socket_command):
+    def jsonify(self):
+        """Parse output of 'clear map' command into JSON format"""
+        message = self.data[:-1]
+        status_code = ''
+        failed = True
+        if message == 'Missing map identifier.\n':
+            status_code = '400'
+            message = message[:-1]
+        elif 'Malformed identifier' in message:
+            status_code = '400'
+            message = message[:-1]
+        elif message == 'Unknown map identifier. Please use #<id> or <file>.\n':
+            status_code = '404'
+            message = message[:-1]
+        elif message == '':
+            status_code = '200'
+            failed = False
+        else:
+            status_code = '500'
+        response = {'status':'failure','code':status_code,'message':message}
+        if not failed:
+            response['status'] = 'success'
+        return json.dumps(response, indent=2), int(status_code)
+
+class d_map(socket_command):
+    def jsonify(self):
+        """Parse output of 'del map' command into JSON format"""
+        message = self.data[:-1]
+        status_code = ''
+        failed = True
+        #  TODO: test malformed identifier error
+        if 'This command expects two parameters:' in message:
+            status_code = '400'
+            message = message[:-1]
+        elif 'Malformed identifier' in message:
+            status_code = '400'
+            message = message[:-1]
+        elif message == 'Unknown map identifier. Please use #<id> or <file>.\n':
+            status_code = '404'
+            message = message[:-1]
+        elif message == 'Key not found.\n':
+            status_code = '404'
+            message = message[:-1]
+        elif message == '':
+            status_code = '200'
+            failed = False
+        else:
+            status_code = '500'
+        response = {'status':'failure','code':status_code,'message':message}
+        if not failed:
+            response['status'] = 'success'
+        return json.dumps(response, indent=2), int(status_code)
+
+class se_map(socket_command):
+    def jsonify(self):
+        """Parse output of 'set map' command into JSON format"""
+        message = self.data[:-1]
+        status_code = ''
+        failed = True
+        if 'expects three parameters:' in message:
+            status_code = '400'
+            message = message[:-1]
+        elif 'Malformed identifier' in message:
+            status_code = '400'
+            message = message[:-1]
+        elif message == 'Unknown map identifier. Please use #<id> or <file>.\n':
+            status_code = '404'
+            message = message[:-1]
+        elif message == 'entry not found.\n':
+            status_code = '404'
+            message = message[:-1]
+        elif message == 'key or pattern not found.\n':
+            status_code = '404'
+            message = message[:-1]
+        elif message == '':
+            status_code = '200'
+            failed = False
+        else:
+            status_code = '500'
+        response = {'status':'failure','code':status_code,'message':message}
+        if not failed:
+            response['status'] = 'success'
         return json.dumps(response, indent=2), int(status_code)
