@@ -17,7 +17,7 @@ app = Flask(__name__)
 #   TODO: add timeout mechanism
 @app.route('/hapra/show/stat', methods=['GET'])
 def show_stat():
-    """Return output of "show stat typed" socket command as a JSON string"""
+    """Dump statistics using the extended typed output format."""
     iid = request.args.get('iid')
     t   = request.args.get('type')
     sid = request.args.get('sid')
@@ -58,15 +58,32 @@ def show_pools():
 
 @app.route('/hapra/show/table', methods=['GET'])
 def show_table():
-    """Return output of "show table" socket command as a JSON string"""
+    """Dump general information on all known stick-tables."""
     t = table('show table ')
     return t.jsonify()
 
-#@app.route('/hapra/show/sess', methods=['GET'])
-#def show_sess():
-#    """Return output of "show sess" socket command as a JSON string """
-#    data = get_output('show sess ')
-#    return parse_sess(data)
+#  TODO: maybe find a better name?
+@app.route('/hapra/show/table-detail', methods=['GET'])
+def show_table_detail():
+    """Dump contents of stick-table <name>."""
+    name = request.args.get('name')
+    typ = request.args.get('type')
+    if typ == None:
+        typ = ''
+    operator = request.args.get('operator')
+    value = request.args.get('value')
+    key = request.args.get('key')
+    if key:
+        td = table_detail('show table ', name, 'key ' + key)
+    else:
+        td = table_detail('show table ', name, 'data.'+typ, operator, value)
+    return td.jsonify()
+
+@app.route('/hapra/show/sess', methods=['GET'])
+def show_sess():
+    """Dump all known sessions."""
+    ss = s_sess('show sess ')
+    return ss.jsonify()
 
 #@app.route('/hapra/show/sess/<sess_id>', methods=['GET'])
 #def show_sess_id(sess_id):
@@ -94,7 +111,7 @@ def shutdown_sessions_server():
     backend = request.args.get('backend')
     server = request.args.get('server')
     if backend and server:
-        sss = shut_sessions_server('shutdown sessions server ', 
+        sss = shut_sessions_server('shutdown sessions server ',
                                    backend + '/' + server)
     else:
         sss = shut_sessions_server('shutdown sessions server ')
@@ -112,13 +129,21 @@ def clear_counters_all():
     cca = ccounters_all('clear counters all ')
     return cca.jsonify()
 
-#  TODO: Add remaining parameters
 @app.route('/hapra/clear/table', methods=['GET'])
 def clear_table():
     """Remove entries from the stick-table <table>."""
-    table = request.args.get('table')
-    ct = ctable('clear table ', table)
-    return ct.jsonify()
+    name = request.args.get('name')
+    typ = request.args.get('type')
+    if typ == None:
+        typ = ''
+    operator = request.args.get('operator')
+    value = request.args.get('value')
+    key = request.args.get('key')
+    if key:
+        td = table_detail('clear table ', name, 'key ' + key)
+    else:
+        td = table_detail('clear table ', name, 'data.'+typ, operator, value)
+    return td.jsonify()
 
 @app.route('/hapra/disable/agent', methods=['GET'])
 def disable_agent():
@@ -233,7 +258,7 @@ def set_maxconn_server():
     server = request.args.get('server')
     value = request.args.get('value')
     if backend and server:
-        sms = s_maxconn_server('set maxconn server ', 
+        sms = s_maxconn_server('set maxconn server ',
                                backend + '/' + server, value)
     else:
         sms = s_maxconn_server('set maxconn server ', value)
@@ -316,7 +341,7 @@ def set_server_checkport():
     server = request.args.get('server')
     port = request.args.get('port')
     if backend and server:
-        ssc = s_server_checkport('set server ', backend + '/' + server, 
+        ssc = s_server_checkport('set server ', backend + '/' + server,
                                 'check-port', port)
     else:
         ssc = s_server_checkport('set server ', 'check-port', port)
@@ -329,7 +354,7 @@ def set_server_state():
     server = request.args.get('server')
     state = request.args.get('state')
     if backend and server:
-        sss = s_server_state('set server ', backend + '/' + server, 
+        sss = s_server_state('set server ', backend + '/' + server,
                                 'state', state)
     else:
         sss = s_server_state('set server ', 'state', state)
@@ -342,7 +367,7 @@ def set_server_weight():
     server = request.args.get('server')
     weight = request.args.get('weight')
     if backend and server:
-        ssw = s_server_weight('set server ', backend + '/' + server, 
+        ssw = s_server_weight('set server ', backend + '/' + server,
                                 'weight', weight)
     else:
         ssw = s_server_weight('set server ', 'weight', weight)
@@ -377,7 +402,7 @@ def clear_acl():
 
 @app.route('/hapra/del/acl', methods=['GET'])
 def del_acl():
-    """Delete all the acl entries from the acl <acl> corresponding to the key 
+    """Delete all the acl entries from the acl <acl> corresponding to the key
         <key>."""
     acl = request.args.get('acl')
     key = request.args.get('key')
@@ -427,7 +452,7 @@ def clear_map():
 
 @app.route('/hapra/del/map', methods=['GET'])
 def del_map():
-    """Delete all the map entries from the map <map> corresponding to the key 
+    """Delete all the map entries from the map <map> corresponding to the key
         <key>."""
     mp = request.args.get('map')
     key = request.args.get('key')

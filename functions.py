@@ -18,10 +18,12 @@ class socket_command(object):
             if args[i] is not None:
                 command_string += (args[i] + ' ')
         command_string += '\n'
+        print(command_string)
         sock.send(command_string.encode('utf-8'))
         #   receive answer from socket
         #   TODO: get rid of fixed message size(16384)
         self.data = sock.recv(16384).decode('utf-8')
+        print(self.data)
         sock.close()
 
 class env(socket_command):
@@ -82,7 +84,7 @@ class stat(socket_command):
         pno_sets = []
         #   split data into a list of entries(lines)
         entries = data.splitlines()
-        #   obj_count will be necessary to determine number of json objects in the 
+        #   obj_count will be necessary to determine number of json objects in the
         #   dict_list[] list.
         obj_count = 0
         #   we need to hold indexes for entries[] list where identifiers change so
@@ -91,7 +93,7 @@ class stat(socket_command):
         # TODO: These 2 for loops scan the whole entries list 2 times. Maybe I can
         #       combine them into a single for loop and scan the list only once
         #   This loop parses each entry by first spliting it to 3 columns seperated
-        #   by colons and then spliting the first column into 6 seperate elements. 
+        #   by colons and then spliting the first column into 6 seperate elements.
         #   Then it counts the number of json objects needed to store all entries.
         #   It also stores starting/ending positions of these objects in a list.
         for index, entry in enumerate(entries):
@@ -118,7 +120,7 @@ class stat(socket_command):
         #   initialize a list of dictionaries, using obj_count as its size. This
         #   will represent out json return value
         dict_list = [{} for obj in range(obj_count)]
-        # this loop scans each object and sets identifying values: type, iid and 
+        # this loop scans each object and sets identifying values: type, iid and
         # sid. Also creates and fills a list of "fields" sub-objects. 1 "fields"
         # object per pno(process_number). Note that pno itself is also a field-name
         for i in range(obj_count):
@@ -146,9 +148,9 @@ class stat(socket_command):
             #  initialize "fields" value as a list of dictionaries(sub-objects),
             #  set the "pno" values at the initialization
             dict_list[i]['fields'] = [{'pno': pno} for pno in pno_sets[i]]
-            #   this inner loop scans all possible field-names and checks if any of 
-            #   these names exist in the current object. All field-values are 
-            #   initialized as null and changed later if enountered in the current 
+            #   this inner loop scans all possible field-names and checks if any of
+            #   these names exist in the current object. All field-values are
+            #   initialized as null and changed later if enountered in the current
             #   object
             for fname in fnames:
                 #   initialize field-values as null for each pno
@@ -228,7 +230,7 @@ class servers_state(socket_command):
         for index in range(1,len(lines)):
             dict_list.append(dict(zip(lines[0],lines[index])))
         return json.dumps(dict_list,indent=2)
-            
+
 class pools(socket_command):
     def jsonify(self):
         """Parse HAProxy pools into JSON format"""
@@ -265,23 +267,113 @@ class table(socket_command):
         lines = self.data[:-1].splitlines()
         dict_list = []
         for line in lines:
-            line = line.split(' ')
-            dict_list.append(dict([('table', line[2][:-1]),
-                                   ('type' , line[4][:-1]),
-                                   ('size' , line[5].split(':')[1][:-1]),
-                                   ('used' , line[6].split(':')[1])]))
+            dict_list.append({})
+            line = line[2:]
+            pairs = line.split(', ')
+            for pair in pairs:
+                pair = pair.split(':')
+                pair[0] = pair[0].strip()
+                pair[1] = pair[1].strip()
+                dict_list[-1][pair[0]] = pair[1]
         return json.dumps(dict_list, indent=2)
-        
-#def parse_sess(data):
-#    """Parse session information into JSON format"""
-#    data = data[:-1]
-#    entries = data.splitlines()
-#    for index, entry in enumerate(entries):
-#        entries[index] = entries[index].split(' ')
-##  TODO: combine these two into a single func
-#def parse_sess_id(data):
-#    """Parse session information into JSON format"""
-#    pass
+
+#  TODO: Add error handling
+class table_detail(socket_command):
+    def jsonify(self):
+        """Parse HAProxy table details into JSON format"""
+        message = self.data[:-1]
+        failed = True
+        status_code = ''
+        if 'Require a valid integer value' in message:
+            status_code = '400'
+            message = message[:-1]
+        elif 'Require and operator among' in message:
+            status_code = '400'
+            message = message[:-1]
+        elif 'Unknown data type' in message:
+            status_code = '400'
+            message = message[:-1]
+        elif 'Data type not stored in this table' in message:
+            status_code = '404'
+            message = message[:-1]
+        elif 'No such table' in message:
+            status_code = '404'
+            message = message[:-1]
+        elif 'Optional argument only supports' in message:
+            status_code = '400'
+            message = message[:-1]
+        elif 'Key value expected' in message:
+            status_code = '400'
+            message = message[:-1]
+        elif message == '':
+            failed = False
+            status_code = '200'
+            message = 'No entry with given key.'
+        else:
+            lines = message.splitlines()
+            del lines[0]
+            if len(lines) is 0:
+                status_code = '404'
+                message = 'Not found.'
+            else:
+                table_dict = {}
+                for line in lines:
+                    line = line.split(': ')
+                    pairs = line[1].split(' ')
+                    line_dict = {}
+                    print(pairs)
+                    for pair in pairs:
+                        pair = pair.split('=')
+                        line_dict[pair[0]] = pair[1]
+                    table_dict[line[0]] = line_dict
+                failed = False
+                status_code = '200'
+                del message
+                message = table_dict
+        response = {'status':'failure','code':status_code,'message':message}
+        if not failed:
+            response['status'] = 'success'
+        return json.dumps(response, indent=2), int(status_code)
+
+class s_sess(socket_command):
+    def jsonify(self):
+        """Parse output of 'show sess' command into JSON format"""
+        message = self.data[:-1]
+        lines = message.splitlines()
+        sess_dict = {}
+        for line in lines:
+            session = line.split(': ', 1)
+            sess_dict[session[0]] = {}
+            sess_info = session[1].split(' ')
+            list_info = []
+            for info in sess_info:
+                if '[' in info and ']' in info or '(' in info or ')' in info:
+                    list_info.append(info)
+            for pair in list(set(sess_info) - set(list_info)):
+                pair = pair.split('=')
+                if pair[1] is None:
+                    sess_dict[session[0]][pair[0]] = None
+                else:
+                    sess_dict[session[0]][pair[0]] = pair[1]
+            for l in list_info:
+                l = l.split('[', 1)
+                l[1] = l[1][:-1]
+                list_items = l[1].split(',')
+                list_pairs = [pair for pair in list_items if '=' in pair]
+                list_items = [item for item in list_items if '=' not in item]
+                dict_pairs = {}
+                for pair in list_pairs:
+                    pair = pair.split('=')
+                    if pair[1] is None:
+                        dict_pairs[pair[0]] = None
+                    else:
+                        dict_pairs[pair[0]] = pair[1]
+                list_items.append(dict_pairs)
+                sess_dict[session[0]][l[0]] = list_items
+        #  TODO: this method always returns 200. Add response codes and error
+        #        handling
+        return json.dumps(sess_dict, indent=2), 200
+                    
 
 class shut_frontend(socket_command):
     def jsonify(self):
@@ -391,6 +483,8 @@ class ctable(socket_command):
         else:
             r = {'status':'unknown','code':'500'}
             return json.dumps(r, indent=2), 500
+    #  TODO: buna devam et. output.txt'ye bak.
+
 
 class dis_agent(socket_command):
     def jsonify(self):
@@ -690,7 +784,7 @@ class s_maxconn_global(socket_command):
 
 class s_ratelimit_connections_global(socket_command):
     def jsonify(self):
-        """Parse output of 'set rate-limit connections global' command into 
+        """Parse output of 'set rate-limit connections global' command into
             JSON format"""
         message = self.data[:-1]
         if message == 'Permission denied\n':
@@ -711,7 +805,7 @@ class s_ratelimit_connections_global(socket_command):
 
 class s_ratelimit_httpcompression_global(socket_command):
     def jsonify(self):
-        """Parse output of 'set rate-limit http-compression global' command 
+        """Parse output of 'set rate-limit http-compression global' command
             into JSON format"""
         message = self.data[:-1]
         if message == 'Permission denied\n':
@@ -732,7 +826,7 @@ class s_ratelimit_httpcompression_global(socket_command):
 
 class s_ratelimit_sessions_global(socket_command):
     def jsonify(self):
-        """Parse output of 'set rate-limit sessions global' command into 
+        """Parse output of 'set rate-limit sessions global' command into
             JSON format"""
         message = self.data[:-1]
         if message == 'Permission denied\n':
@@ -753,7 +847,7 @@ class s_ratelimit_sessions_global(socket_command):
 
 class s_ratelimit_sslsessions_global(socket_command):
     def jsonify(self):
-        """Parse output of 'set rate-limit ssl-sessions global' command into 
+        """Parse output of 'set rate-limit ssl-sessions global' command into
             JSON format"""
         message = self.data[:-1]
         if message == 'Permission denied\n':

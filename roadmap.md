@@ -12,7 +12,7 @@ Starting with `show <...>` commands, all Unix Socket commands will be implemente
 - [x] `show acl [<acl>]`
 - [x] `show pools`
 - [x] `show servers state [<backend>]`
-- [ ] `show sess`
+- [x] `show sess`
 - [ ] `show sess <id>`
 - [x] `show table`
 - [ ] `show table <name> [ data.<type> <operator> <value> ] | [ key <key> ]`
