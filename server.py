@@ -489,5 +489,12 @@ def set_map():
     sm = se_map('set map ', mp, key, value)
     return sm.jsonify()
 
+@app.route('/hapra/set/timeout/cli', methods=['GET'])
+def set_timeout_cli():
+    """Change the CLI interface timeout for current connection."""
+    delay = request.args.get('delay')
+    stc = s_timeout_cli('set timeout cli ', delay)
+    return stc.jsonify()
+
 if __name__ == '__main__':
     app.run(debug=True)

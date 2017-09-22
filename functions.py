@@ -1310,26 +1310,23 @@ class d_map(socket_command):
             response['status'] = 'success'
         return json.dumps(response, indent=2), int(status_code)
 
-class se_map(socket_command):
+class s_timeout_cli(socket_command):
     def jsonify(self):
-        """Parse output of 'set map' command into JSON format"""
+        """Parse output of 'set timeout cli' command into JSON format"""
         message = self.data[:-1]
         status_code = ''
         failed = True
-        if 'expects three parameters:' in message:
+        if 'Permission denied' in message:
+            status_code = '500'
+            message = message[:-1]
+        elif 'Invalid timeout value' in message:
             status_code = '400'
             message = message[:-1]
-        elif 'Malformed identifier' in message:
+        elif 'Expects an integer value' in message:
             status_code = '400'
             message = message[:-1]
-        elif message == 'Unknown map identifier. Please use #<id> or <file>.\n':
-            status_code = '404'
-            message = message[:-1]
-        elif message == 'entry not found.\n':
-            status_code = '404'
-            message = message[:-1]
-        elif message == 'key or pattern not found.\n':
-            status_code = '404'
+        elif "'set timeout' only supports 'cli'" in message:
+            status_code = '400'
             message = message[:-1]
         elif message == '':
             status_code = '200'

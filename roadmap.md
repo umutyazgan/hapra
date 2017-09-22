@@ -58,5 +58,5 @@ Starting with `show <...>` commands, all Unix Socket commands will be implemente
 - [ ] `set ssl ocsp-response <response>`
 - [ ] `set ssl tls-key <id> <tlskey>`
 - [ ] `set table <table> key <key> [data.<data_type> <value>]*`
-- [ ] `set timeout cli <delay>`
+- [x] `set timeout cli <delay>`
 - [x] `set weight <backend>/<server> <weight>[%]`
