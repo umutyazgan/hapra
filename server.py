@@ -321,6 +321,19 @@ def set_server_addr():
         ssa = s_server_addr('set server ', 'addr', ip)
     return ssa.jsonify()
 
+@app.route('/hapra/set/server/agent', methods=['GET'])
+def set_server_agent():
+    """Force a server's agent to a new state."""
+    backend = request.args.get('backend')
+    server = request.args.get('server')
+    state = request.args.get('state')
+    if backend and server:
+        ssh = s_server_agent('set server ', backend + '/' + server, 'agent',
+                                state)
+    else:
+        ssh = s_server_agent('set server ', 'agent', state)
+    return ssh.jsonify()
+
 @app.route('/hapra/set/server/health', methods=['GET'])
 def set_server_health():
     """Force a server's health to a new state."""

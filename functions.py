@@ -373,7 +373,6 @@ class s_sess(socket_command):
         #  TODO: this method always returns 200. Add response codes and error
         #        handling
         return json.dumps(sess_dict, indent=2), 200
-                    
 
 class shut_frontend(socket_command):
     def jsonify(self):
@@ -907,7 +906,31 @@ class s_server_addr(socket_command):
             response['status'] = 'success'
         return json.dumps(response, indent=2), int(status_code)
 
-#  TODO: 'set server agent'
+class s_server_agent(socket_command):
+    def jsonify(self):
+        """Parse output of 'set server agent' command into JSON format"""
+        message = self.data[:-1]
+        status_code = ''
+        failed = True
+        if message == 'Permission denied\n':
+            status_code = '500'
+        elif message == "No such server.\n":
+            status_code = '404'
+        elif message == "No such backend.\n":
+            status_code = '404'
+        elif message == "Require 'backend/server'.\n":
+            status_code = '400'
+        elif "expects 'up' or 'down'" in message:
+            status_code = '400'
+        elif message == '':
+            status_code = '200'
+            failed = False
+        else:
+            status_code = '500'
+        response = {'status':'failure','code':status_code,'message':message[:-1]}
+        if not failed:
+            response['status'] = 'success'
+        return json.dumps(response, indent=2), int(status_code)
 
 class s_server_health(socket_command):
     def jsonify(self):

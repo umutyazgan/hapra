@@ -51,7 +51,7 @@ Starting with `show <...>` commands, all Unix Socket commands will be implemente
 - [x] `set rate-limit sessions global <value>`
 - [x] `set rate-limit ssl-sessions global <value>`
 - [x] `set server <backend>/<server> addr <ip4 or ip6 address>`
-- [ ] `set server <backend>/<server> agent [ up | down ]`
+- [x] `set server <backend>/<server> agent [ up | down ]`
 - [x] `set server <backend>/<server> health [ up | stopping | down ]`
 - [x] `set server <backend>/<server> state [ ready | drain | maint ]`
 - [x] `set server <backend>/<server> weight <weight>[%]`
