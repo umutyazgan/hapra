@@ -18,12 +18,12 @@ class socket_command(object):
             if args[i] is not None:
                 command_string += (args[i] + ' ')
         command_string += '\n'
-        print(command_string)
+#        print(command_string)
         sock.send(command_string.encode('utf-8'))
         #   receive answer from socket
         #   TODO: get rid of fixed message size(16384)
         self.data = sock.recv(16384).decode('utf-8')
-        print(self.data)
+#        print(self.data)
         sock.close()
 
 class env(socket_command):

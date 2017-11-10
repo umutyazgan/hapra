@@ -1,4 +1,3 @@
-#!../flask/bin/python
 
 #  TODO: this application needs root privileges to run. Make it work without it.
 #  TODO: this application may allow user to execute arbitrary haproxy socket
@@ -6,13 +5,20 @@
 #        be handled.
 
 import socket
-from flask import Flask, jsonify, abort, make_response, request, url_for
+from flask import Flask, jsonify, abort, make_response, request, Response, url_for
 import csv
 import json
 import string
-from functions import *
+from .functions import *
 
 app = Flask(__name__)
+app.config.from_envvar('CONFIG_FILE')
+
+@app.route('/test/', methods=['GET'])
+def test():
+    """TEST"""
+#    test_str = str(app.config['READ_ONLY'])
+    return "True"
 
 #   TODO: add timeout mechanism
 @app.route('/hapra/show/stat', methods=['GET'])
@@ -22,7 +28,7 @@ def show_stat():
     t   = request.args.get('type')
     sid = request.args.get('sid')
     s = stat('show stat ', iid, t, sid)
-    return s.jsonify()
+    return Response(s.jsonify(), mimetype='application/json')
 
 @app.route('/hapra/show/env', methods=['GET'])
 def show_env():
@@ -94,6 +100,10 @@ def show_sess():
 @app.route('/hapra/shutdown/frontend', methods=['GET'])
 def shutdown_frontend():
     """Shutdown frontend precified by name or id"""
+    if app.config['READ_ONLY']:
+        message = "Error: Read only mode is enabled"
+        response = {'status':'failure','code':'405','message':message}
+        return json.dumps(response, indent=2), 405
     frontend = request.args.get('frontend')
     sf = shut_frontend('shutdown frontend ', frontend)
     return sf.jsonify()
@@ -101,6 +111,10 @@ def shutdown_frontend():
 @app.route('/hapra/shutdown/session', methods=['GET'])
 def shutdown_session():
     """Shutdown session precified by id"""
+    if app.config['READ_ONLY']:
+        message = "Error: Read only mode is enabled"
+        response = {'status':'failure','code':'405','message':message}
+        return json.dumps(response, indent=2), 405
     session = request.args.get('session')
     ss = shut_session('shutdown session ', session)
     return ss.jsonify()
@@ -108,6 +122,10 @@ def shutdown_session():
 @app.route('/hapra/shutdown/sessions-server', methods=['GET'])
 def shutdown_sessions_server():
     """Shutdown frontend precified by name or id"""
+    if app.config['READ_ONLY']:
+        message = "Error: Read only mode is enabled"
+        response = {'status':'failure','code':'405','message':message}
+        return json.dumps(response, indent=2), 405
     backend = request.args.get('backend')
     server = request.args.get('server')
     if backend and server:
@@ -120,18 +138,32 @@ def shutdown_sessions_server():
 @app.route('/hapra/clear/counters', methods=['GET'])
 def clear_counters():
     """Clear the max values of the statistics counters in each proxy/server"""
+    if app.config['READ_ONLY']:
+        message = "Error: Read only mode is enabled"
+        response = {'status':'failure','code':'405','message':message}
+        return json.dumps(response, indent=2), 405
+    if app.config['READ_ONLY']:
+        return "ERROR: READ ONLY MODE ENABLED"
     cc = ccounters('clear counters ')
     return cc.jsonify()
 
 @app.route('/hapra/clear/counters/all', methods=['GET'])
 def clear_counters_all():
     """Clear all statistics counters in each proxy/server"""
+    if app.config['READ_ONLY']:
+        message = "Error: Read only mode is enabled"
+        response = {'status':'failure','code':'405','message':message}
+        return json.dumps(response, indent=2), 405
     cca = ccounters_all('clear counters all ')
     return cca.jsonify()
 
 @app.route('/hapra/clear/table', methods=['GET'])
 def clear_table():
     """Remove entries from the stick-table <table>."""
+    if app.config['READ_ONLY']:
+        message = "Error: Read only mode is enabled"
+        response = {'status':'failure','code':'405','message':message}
+        return json.dumps(response, indent=2), 405
     name = request.args.get('name')
     typ = request.args.get('type')
     if typ == None:
@@ -148,6 +180,10 @@ def clear_table():
 @app.route('/hapra/disable/agent', methods=['GET'])
 def disable_agent():
     """Mark the auxiliary agent check as temporarily stopped."""
+    if app.config['READ_ONLY']:
+        message = "Error: Read only mode is enabled"
+        response = {'status':'failure','code':'405','message':message}
+        return json.dumps(response, indent=2), 405
     backend = request.args.get('backend')
     server = request.args.get('server')
     if backend and server:
@@ -159,6 +195,10 @@ def disable_agent():
 @app.route('/hapra/disable/frontend', methods=['GET'])
 def disable_frontend():
     """Mark the frontend as temporarily stopped."""
+    if app.config['READ_ONLY']:
+        message = "Error: Read only mode is enabled"
+        response = {'status':'failure','code':'405','message':message}
+        return json.dumps(response, indent=2), 405
     frontend = request.args.get('frontend')
     df = dis_frontend('disable frontend ', frontend)
     return df.jsonify()
@@ -166,6 +206,10 @@ def disable_frontend():
 @app.route('/hapra/disable/health', methods=['GET'])
 def disable_health():
     """Mark the auxiliary health check as temporarily stopped."""
+    if app.config['READ_ONLY']:
+        message = "Error: Read only mode is enabled"
+        response = {'status':'failure','code':'405','message':message}
+        return json.dumps(response, indent=2), 405
     backend = request.args.get('backend')
     server = request.args.get('server')
     if backend and server:
@@ -177,6 +221,10 @@ def disable_health():
 @app.route('/hapra/disable/server', methods=['GET'])
 def disable_server():
     """Mark the server DOWN for maintenance."""
+    if app.config['READ_ONLY']:
+        message = "Error: Read only mode is enabled"
+        response = {'status':'failure','code':'405','message':message}
+        return json.dumps(response, indent=2), 405
     backend = request.args.get('backend')
     server = request.args.get('server')
     if backend and server:
@@ -188,6 +236,10 @@ def disable_server():
 @app.route('/hapra/enable/agent', methods=['GET'])
 def enable_agent():
     """Resume auxiliary agent check that was temporarily stopped."""
+    if app.config['READ_ONLY']:
+        message = "Error: Read only mode is enabled"
+        response = {'status':'failure','code':'405','message':message}
+        return json.dumps(response, indent=2), 405
     backend = request.args.get('backend')
     server = request.args.get('server')
     if backend and server:
@@ -199,6 +251,10 @@ def enable_agent():
 @app.route('/hapra/enable/frontend', methods=['GET'])
 def enable_frontend():
     """Resume a frontend which was temporarily stopped."""
+    if app.config['READ_ONLY']:
+        message = "Error: Read only mode is enabled"
+        response = {'status':'failure','code':'405','message':message}
+        return json.dumps(response, indent=2), 405
     frontend = request.args.get('frontend')
     ef = en_frontend('enable frontend ', frontend)
     return ef.jsonify()
@@ -206,6 +262,10 @@ def enable_frontend():
 @app.route('/hapra/enable/health', methods=['GET'])
 def enable_health():
     """Resume a primary health check that was temporarily stopped."""
+    if app.config['READ_ONLY']:
+        message = "Error: Read only mode is enabled"
+        response = {'status':'failure','code':'405','message':message}
+        return json.dumps(response, indent=2), 405
     backend = request.args.get('backend')
     server = request.args.get('server')
     if backend and server:
@@ -217,6 +277,10 @@ def enable_health():
 @app.route('/hapra/enable/server', methods=['GET'])
 def enable_server():
     """Mark the server UP."""
+    if app.config['READ_ONLY']:
+        message = "Error: Read only mode is enabled"
+        response = {'status':'failure','code':'405','message':message}
+        return json.dumps(response, indent=2), 405
     backend = request.args.get('backend')
     server = request.args.get('server')
     if backend and server:
@@ -245,6 +309,10 @@ def help():
 @app.route('/hapra/set/maxconn/frontend', methods=['GET'])
 def set_maxconn_frontend():
     """Dynamically change the specified frontend's maxconn setting."""
+    if app.config['READ_ONLY']:
+        message = "Error: Read only mode is enabled"
+        response = {'status':'failure','code':'405','message':message}
+        return json.dumps(response, indent=2), 405
     frontend = request.args.get('frontend')
     value = request.args.get('value')
     smf = s_maxconn_frontend('set maxconn frontend ', frontend, value)
@@ -254,6 +322,10 @@ def set_maxconn_frontend():
 @app.route('/hapra/set/maxconn/server', methods=['GET'])
 def set_maxconn_server():
     """Dynamically change the specified server's maxconn setting."""
+    if app.config['READ_ONLY']:
+        message = "Error: Read only mode is enabled"
+        response = {'status':'failure','code':'405','message':message}
+        return json.dumps(response, indent=2), 405
     backend = request.args.get('backend')
     server = request.args.get('server')
     value = request.args.get('value')
@@ -267,6 +339,10 @@ def set_maxconn_server():
 @app.route('/hapra/set/maxconn/global', methods=['GET'])
 def set_maxconn_global():
     """Dynamically change the global maxconn setting."""
+    if app.config['READ_ONLY']:
+        message = "Error: Read only mode is enabled"
+        response = {'status':'failure','code':'405','message':message}
+        return json.dumps(response, indent=2), 405
     value = request.args.get('value')
     smg = s_maxconn_global('set maxconn global ', value)
     return smg.jsonify()
@@ -274,6 +350,10 @@ def set_maxconn_global():
 @app.route('/hapra/set/rate-limit/connections/global', methods=['GET'])
 def set_ratelimit_connections_global():
     """Change the process-wide connection rate limit."""
+    if app.config['READ_ONLY']:
+        message = "Error: Read only mode is enabled"
+        response = {'status':'failure','code':'405','message':message}
+        return json.dumps(response, indent=2), 405
     value = request.args.get('value')
     srcg = s_ratelimit_connections_global('set rate-limit connections global ',
                                           value)
@@ -282,6 +362,10 @@ def set_ratelimit_connections_global():
 @app.route('/hapra/set/rate-limit/http-compression/global', methods=['GET'])
 def set_ratelimit_httpcompression_global():
     """Change the maximum input compression rate."""
+    if app.config['READ_ONLY']:
+        message = "Error: Read only mode is enabled"
+        response = {'status':'failure','code':'405','message':message}
+        return json.dumps(response, indent=2), 405
     value = request.args.get('value')
     srhg = s_ratelimit_httpcompression_global(
            'set rate-limit http-compression global ', value)
@@ -290,6 +374,10 @@ def set_ratelimit_httpcompression_global():
 @app.route('/hapra/set/rate-limit/sessions/global', methods=['GET'])
 def set_ratelimit_sessions_global():
     """Change the process-wide session rate limit."""
+    if app.config['READ_ONLY']:
+        message = "Error: Read only mode is enabled"
+        response = {'status':'failure','code':'405','message':message}
+        return json.dumps(response, indent=2), 405
     value = request.args.get('value')
     srsg = s_ratelimit_sessions_global('set rate-limit sessions global ',
                                           value)
@@ -298,6 +386,10 @@ def set_ratelimit_sessions_global():
 @app.route('/hapra/set/rate-limit/ssl-sessions/global', methods=['GET'])
 def set_ratelimit_sslsessions_global():
     """Change the process-wide SSL session rate limit."""
+    if app.config['READ_ONLY']:
+        message = "Error: Read only mode is enabled"
+        response = {'status':'failure','code':'405','message':message}
+        return json.dumps(response, indent=2), 405
     value = request.args.get('value')
     srsg = s_ratelimit_sslsessions_global('set rate-limit ssl-sessions global ',
                                           value)
@@ -306,6 +398,10 @@ def set_ratelimit_sslsessions_global():
 @app.route('/hapra/set/server/addr', methods=['GET'])
 def set_server_addr():
     """Replace the current IP address of a server by the one provided."""
+    if app.config['READ_ONLY']:
+        message = "Error: Read only mode is enabled"
+        response = {'status':'failure','code':'405','message':message}
+        return json.dumps(response, indent=2), 405
     backend = request.args.get('backend')
     server = request.args.get('server')
     ip = request.args.get('ip')
@@ -324,6 +420,10 @@ def set_server_addr():
 @app.route('/hapra/set/server/agent', methods=['GET'])
 def set_server_agent():
     """Force a server's agent to a new state."""
+    if app.config['READ_ONLY']:
+        message = "Error: Read only mode is enabled"
+        response = {'status':'failure','code':'405','message':message}
+        return json.dumps(response, indent=2), 405
     backend = request.args.get('backend')
     server = request.args.get('server')
     state = request.args.get('state')
@@ -337,6 +437,10 @@ def set_server_agent():
 @app.route('/hapra/set/server/health', methods=['GET'])
 def set_server_health():
     """Force a server's health to a new state."""
+    if app.config['READ_ONLY']:
+        message = "Error: Read only mode is enabled"
+        response = {'status':'failure','code':'405','message':message}
+        return json.dumps(response, indent=2), 405
     backend = request.args.get('backend')
     server = request.args.get('server')
     state = request.args.get('state')
@@ -350,6 +454,10 @@ def set_server_health():
 @app.route('/hapra/set/server/check-port', methods=['GET'])
 def set_server_checkport():
     """Change the port used for health checking to <port>."""
+    if app.config['READ_ONLY']:
+        message = "Error: Read only mode is enabled"
+        response = {'status':'failure','code':'405','message':message}
+        return json.dumps(response, indent=2), 405
     backend = request.args.get('backend')
     server = request.args.get('server')
     port = request.args.get('port')
@@ -363,6 +471,10 @@ def set_server_checkport():
 @app.route('/hapra/set/server/state', methods=['GET'])
 def set_server_state():
     """Force a server's administrative state to a new state."""
+    if app.config['READ_ONLY']:
+        message = "Error: Read only mode is enabled"
+        response = {'status':'failure','code':'405','message':message}
+        return json.dumps(response, indent=2), 405
     backend = request.args.get('backend')
     server = request.args.get('server')
     state = request.args.get('state')
@@ -376,6 +488,10 @@ def set_server_state():
 @app.route('/hapra/set/server/weight', methods=['GET'])
 def set_server_weight():
     """Change a server's weight to the value passed in argument."""
+    if app.config['READ_ONLY']:
+        message = "Error: Read only mode is enabled"
+        response = {'status':'failure','code':'405','message':message}
+        return json.dumps(response, indent=2), 405
     backend = request.args.get('backend')
     server = request.args.get('server')
     weight = request.args.get('weight')
@@ -389,6 +505,10 @@ def set_server_weight():
 @app.route('/hapra/set/weight', methods=['GET'])
 def set_weight():
     """Change a server's weight to the value passed in argument."""
+    if app.config['READ_ONLY']:
+        message = "Error: Read only mode is enabled"
+        response = {'status':'failure','code':'405','message':message}
+        return json.dumps(response, indent=2), 405
     backend = request.args.get('backend')
     server = request.args.get('server')
     weight = request.args.get('weight')
@@ -401,6 +521,10 @@ def set_weight():
 @app.route('/hapra/add/acl', methods=['GET'])
 def add_acl():
     """Add an entry into the acl <acl>."""
+    if app.config['READ_ONLY']:
+        message = "Error: Read only mode is enabled"
+        response = {'status':'failure','code':'405','message':message}
+        return json.dumps(response, indent=2), 405
     acl = request.args.get('acl')
     pattern = request.args.get('pattern')
     aa = a_acl('add acl ', acl, pattern)
@@ -409,6 +533,10 @@ def add_acl():
 @app.route('/hapra/clear/acl', methods=['GET'])
 def clear_acl():
     """Remove all entries from the acl <acl>."""
+    if app.config['READ_ONLY']:
+        message = "Error: Read only mode is enabled"
+        response = {'status':'failure','code':'405','message':message}
+        return json.dumps(response, indent=2), 405
     acl = request.args.get('acl')
     ca = c_acl('clear acl ', acl)
     return ca.jsonify()
@@ -417,6 +545,10 @@ def clear_acl():
 def del_acl():
     """Delete all the acl entries from the acl <acl> corresponding to the key
         <key>."""
+    if app.config['READ_ONLY']:
+        message = "Error: Read only mode is enabled"
+        response = {'status':'failure','code':'405','message':message}
+        return json.dumps(response, indent=2), 405
     acl = request.args.get('acl')
     key = request.args.get('key')
     da = d_acl('del acl ', acl, key)
@@ -450,6 +582,10 @@ def show_map():
 @app.route('/hapra/add/map', methods=['GET'])
 def add_map():
     """Add an entry into the map <map>."""
+    if app.config['READ_ONLY']:
+        message = "Error: Read only mode is enabled"
+        response = {'status':'failure','code':'405','message':message}
+        return json.dumps(response, indent=2), 405
     mp = request.args.get('map')
     key = request.args.get('key')
     value = request.args.get('value')
@@ -459,6 +595,10 @@ def add_map():
 @app.route('/hapra/clear/map', methods=['GET'])
 def clear_map():
     """Remove all entries from the map <map>."""
+    if app.config['READ_ONLY']:
+        message = "Error: Read only mode is enabled"
+        response = {'status':'failure','code':'405','message':message}
+        return json.dumps(response, indent=2), 405
     mp = request.args.get('map')
     cm = c_map('clear map ', mp)
     return cm.jsonify()
@@ -467,6 +607,10 @@ def clear_map():
 def del_map():
     """Delete all the map entries from the map <map> corresponding to the key
         <key>."""
+    if app.config['READ_ONLY']:
+        message = "Error: Read only mode is enabled"
+        response = {'status':'failure','code':'405','message':message}
+        return json.dumps(response, indent=2), 405
     mp = request.args.get('map')
     key = request.args.get('key')
     dm = d_map('del map ', mp, key)
@@ -483,6 +627,10 @@ def get_map():
 @app.route('/hapra/set/map', methods=['GET'])
 def set_map():
     """Modify the value corresponding to each key <key> in a map <map>."""
+    if app.config['READ_ONLY']:
+        message = "Error: Read only mode is enabled"
+        response = {'status':'failure','code':'405','message':message}
+        return json.dumps(response, indent=2), 405
     mp = request.args.get('map')
     key = request.args.get('key')
     value = request.args.get('value')
@@ -492,9 +640,13 @@ def set_map():
 @app.route('/hapra/set/timeout/cli', methods=['GET'])
 def set_timeout_cli():
     """Change the CLI interface timeout for current connection."""
+    if app.config['READ_ONLY']:
+        message = "Error: Read only mode is enabled"
+        response = {'status':'failure','code':'405','message':message}
+        return json.dumps(response, indent=2), 405
     delay = request.args.get('delay')
     stc = s_timeout_cli('set timeout cli ', delay)
     return stc.jsonify()
 
 if __name__ == '__main__':
-    app.run(debug=True)
+    app.run(host='0.0.0.0', port=5011)
