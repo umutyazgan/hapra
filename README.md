@@ -22,6 +22,11 @@ provided Dockerfile. You can use whatever `<image_name>` you like.
 # docker build -t <image_name> .
 ```
 
+This application also has a configuration file, `hapra.cfg`. Right now
+only supported configuration is `READ_ONLY` which is set to `True` by
+default. This file will be located at `/etc/hapra.cfg` in the Docker
+container. You can edit the Dockerfile to change this location.
+
 Then use `docker run` to run the image you just built. You can use
 whatever `<container_name>` you like. This command assumes that your
 haproxy stat socket is located at `/var/lib/haproxy/` directory. If
@@ -70,6 +75,12 @@ Install remaining python packages using this virtual environment:
 ```
 
 You can use a systemd unit file to start the application at every boot.
+
+A configuration file, `hapra.cfg`, is also provided with the
+application. Right now, it only supports a `READ_ONLY` option which is
+set to `True` by default. This configuration file is necessary for the
+application to work, so you need to pass it's location as an
+environment variable in the unit file.
 
 ```
 [Unit]
@@ -184,9 +195,9 @@ http://localhost/hapra/show/stat?id=2&sid=5
 ```
 
 Each URL starts with `.../hapra/`. `show <...>` commands are formated as
-`.../hapra/show/*`, `get <...>` commands are formated as 
-`.../hapra/get/*`, `set <...>` commands are formated as 
-`.../hapra/set/*` and so on. You can pass parameters to commands as 
+`.../hapra/show/*`, `get <...>` commands are formated as
+`.../hapra/get/*`, `set <...>` commands are formated as
+`.../hapra/set/*` and so on. You can pass parameters to commands as
 query strings.
 
 URL's and their respective socket commands will be documented in a
