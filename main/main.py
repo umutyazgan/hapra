@@ -25,7 +25,8 @@ def show_stat():
     iid = request.args.get('iid')
     t   = request.args.get('type')
     sid = request.args.get('sid')
-    if ';' in iid or ';' in t or ';' in sid:
+    query_strings = filter(None, [iid, t, sid])
+    if any(';' in qstr for qstr in query_strings):
         message = "Error: ';' Using character in query strings is not allowed."
         response = {'status':'failure','code':'403','message':message}
         return json.dumps(response, indent=2), 403
@@ -36,7 +37,7 @@ def show_stat():
 def show_env():
     """Return output of "show env" socket command as a JSON string"""
     name = request.args.get('name')
-    if ';' in name:
+    if name and ';' in name:
         message = "Error: ';' Using character in query strings is not allowed."
         response = {'status':'failure','code':'403','message':message}
         return json.dumps(response, indent=2), 403
@@ -58,7 +59,7 @@ def show_info():
 @app.route('/hapra/show/servers-state', methods=['GET'])
 def show_servers_state():
     """Return output of "show servers state" socket command as a JSON string"""
-    if ';' in backend:
+    if backend and ';' in backend:
         message = "Error: ';' Using character in query strings is not allowed."
         response = {'status':'failure','code':'403','message':message}
         return json.dumps(response, indent=2), 403
@@ -88,7 +89,8 @@ def show_table_detail():
     operator = request.args.get('operator')
     value = request.args.get('value')
     key = request.args.get('key')
-    if ';' in name or ';' in typ or ';' in operator or ';' in value or ';' in key:
+    query_strings = filter(None, [name, typ, operator, value, key])
+    if any(';' in qstr for qstr in query_strings):
         message = "Error: ';' Using character in query strings is not allowed."
         response = {'status':'failure','code':'403','message':message}
         return json.dumps(response, indent=2), 403
@@ -118,7 +120,7 @@ def shutdown_frontend():
         response = {'status':'failure','code':'405','message':message}
         return json.dumps(response, indent=2), 405
     frontend = request.args.get('frontend')
-    if ';' in frontend:
+    if frontend and ';' in frontend:
         return "Usage of ';' in parameters is not allowed"
     sf = shut_frontend('shutdown frontend ', frontend)
     return sf.jsonify()
@@ -131,7 +133,7 @@ def shutdown_session():
         response = {'status':'failure','code':'405','message':message}
         return json.dumps(response, indent=2), 405
     session = request.args.get('session')
-    if ';' in session:
+    if session and ';' in session:
         message = "Error: ';' Using character in query strings is not allowed."
         response = {'status':'failure','code':'403','message':message}
         return json.dumps(response, indent=2), 403
@@ -147,7 +149,8 @@ def shutdown_sessions_server():
         return json.dumps(response, indent=2), 405
     backend = request.args.get('backend')
     server = request.args.get('server')
-    if ';' in backend or ';' in server:
+    query_strings = filter(None, [backend, server])
+    if any(';' in qstr for qstr in query_strings):
         message = "Error: ';' Using character in query strings is not allowed."
         response = {'status':'failure','code':'403','message':message}
         return json.dumps(response, indent=2), 403
@@ -192,7 +195,8 @@ def clear_table():
     operator = request.args.get('operator')
     value = request.args.get('value')
     key = request.args.get('key')
-    if ';' in name or ';' in typ or ';' in operator or ';' in value or ';' in key:
+    query_strings = filter(None, [name, typ, operator, value, key])
+    if any(';' in qstr for qstr in query_strings):
         message = "Error: ';' Using character in query strings is not allowed."
         response = {'status':'failure','code':'403','message':message}
         return json.dumps(response, indent=2), 403
@@ -211,7 +215,8 @@ def disable_agent():
         return json.dumps(response, indent=2), 405
     backend = request.args.get('backend')
     server = request.args.get('server')
-    if ';' in backend or ';' in server:
+    query_strings = filter(None, [backend, server])
+    if any(';' in qstr for qstr in query_strings):
         message = "Error: ';' Using character in query strings is not allowed."
         response = {'status':'failure','code':'403','message':message}
         return json.dumps(response, indent=2), 403
@@ -229,7 +234,7 @@ def disable_frontend():
         response = {'status':'failure','code':'405','message':message}
         return json.dumps(response, indent=2), 405
     frontend = request.args.get('frontend')
-    if ';' in frontend:
+    if frontend and ';' in frontend:
         message = "Error: ';' Using character in query strings is not allowed."
         response = {'status':'failure','code':'403','message':message}
         return json.dumps(response, indent=2), 403
@@ -245,7 +250,8 @@ def disable_health():
         return json.dumps(response, indent=2), 405
     backend = request.args.get('backend')
     server = request.args.get('server')
-    if ';' in backend or ';' in server:
+    query_strings = filter(None, [backend, server])
+    if any(';' in qstr for qstr in query_strings):
         message = "Error: ';' Using character in query strings is not allowed."
         response = {'status':'failure','code':'403','message':message}
         return json.dumps(response, indent=2), 403
@@ -264,7 +270,8 @@ def disable_server():
         return json.dumps(response, indent=2), 405
     backend = request.args.get('backend')
     server = request.args.get('server')
-    if ';' in backend or ';' in server:
+    query_strings = filter(None, [backend, server])
+    if any(';' in qstr for qstr in query_strings):
         message = "Error: ';' Using character in query strings is not allowed."
         response = {'status':'failure','code':'403','message':message}
         return json.dumps(response, indent=2), 403
@@ -283,7 +290,8 @@ def enable_agent():
         return json.dumps(response, indent=2), 405
     backend = request.args.get('backend')
     server = request.args.get('server')
-    if ';' in backend or ';' in server:
+    query_strings = filter(None, [backend, server])
+    if any(';' in qstr for qstr in query_strings):
         message = "Error: ';' Using character in query strings is not allowed."
         response = {'status':'failure','code':'403','message':message}
         return json.dumps(response, indent=2), 403
@@ -300,7 +308,7 @@ def enable_frontend():
         message = "Error: Read only mode is enabled"
         response = {'status':'failure','code':'405','message':message}
         return json.dumps(response, indent=2), 405
-    if ';' in frontend:
+    if frontend and ';' in frontend:
         message = "Error: ';' Using character in query strings is not allowed."
         response = {'status':'failure','code':'403','message':message}
         return json.dumps(response, indent=2), 403
@@ -317,7 +325,8 @@ def enable_health():
         return json.dumps(response, indent=2), 405
     backend = request.args.get('backend')
     server = request.args.get('server')
-    if ';' in backend or ';' in server:
+    query_strings = filter(None, [backend, server])
+    if any(';' in qstr for qstr in query_strings):
         message = "Error: ';' Using character in query strings is not allowed."
         response = {'status':'failure','code':'403','message':message}
         return json.dumps(response, indent=2), 403
@@ -334,7 +343,8 @@ def enable_server():
         message = "Error: Read only mode is enabled"
         response = {'status':'failure','code':'405','message':message}
         return json.dumps(response, indent=2), 405
-    if ';' in backend or ';' in server:
+    query_strings = filter(None, [backend, server])
+    if any(';' in qstr for qstr in query_strings):
         message = "Error: ';' Using character in query strings is not allowed."
         response = {'status':'failure','code':'403','message':message}
         return json.dumps(response, indent=2), 403
@@ -351,7 +361,8 @@ def get_weight():
     """Report the current weight and the initial weight of <server>."""
     backend = request.args.get('backend')
     server = request.args.get('server')
-    if ';' in backend or ';' in server:
+    query_strings = filter(None, [backend, server])
+    if any(';' in qstr for qstr in query_strings):
         message = "Error: ';' Using character in query strings is not allowed."
         response = {'status':'failure','code':'403','message':message}
         return json.dumps(response, indent=2), 403
@@ -376,7 +387,8 @@ def set_maxconn_frontend():
         return json.dumps(response, indent=2), 405
     frontend = request.args.get('frontend')
     value = request.args.get('value')
-    if ';' in frontend or ';' in value:
+    query_strings = filter(None, [frontend, value])
+    if any(';' in qstr for qstr in query_strings):
         message = "Error: ';' Using character in query strings is not allowed."
         response = {'status':'failure','code':'403','message':message}
         return json.dumps(response, indent=2), 403
@@ -394,7 +406,8 @@ def set_maxconn_server():
     backend = request.args.get('backend')
     server = request.args.get('server')
     value = request.args.get('value')
-    if ';' in backend or ';' in server or ';' in value:
+    query_strings = filter(None, [backend, server, value])
+    if any(';' in qstr for qstr in query_strings):
         message = "Error: ';' Using character in query strings is not allowed."
         response = {'status':'failure','code':'403','message':message}
         return json.dumps(response, indent=2), 403
@@ -413,7 +426,7 @@ def set_maxconn_global():
         response = {'status':'failure','code':'405','message':message}
         return json.dumps(response, indent=2), 405
     value = request.args.get('value')
-    if ';' in value:
+    if value and ';' in value:
         message = "Error: ';' Using character in query strings is not allowed."
         response = {'status':'failure','code':'403','message':message}
         return json.dumps(response, indent=2), 403
@@ -428,7 +441,7 @@ def set_ratelimit_connections_global():
         response = {'status':'failure','code':'405','message':message}
         return json.dumps(response, indent=2), 405
     value = request.args.get('value')
-    if ';' in value:
+    if value and ';' in value:
         message = "Error: ';' Using character in query strings is not allowed."
         response = {'status':'failure','code':'403','message':message}
         return json.dumps(response, indent=2), 403
@@ -444,7 +457,7 @@ def set_ratelimit_httpcompression_global():
         response = {'status':'failure','code':'405','message':message}
         return json.dumps(response, indent=2), 405
     value = request.args.get('value')
-    if ';' in value:
+    if value and ';' in value:
         message = "Error: ';' Using character in query strings is not allowed."
         response = {'status':'failure','code':'403','message':message}
         return json.dumps(response, indent=2), 403
@@ -460,7 +473,7 @@ def set_ratelimit_sessions_global():
         response = {'status':'failure','code':'405','message':message}
         return json.dumps(response, indent=2), 405
     value = request.args.get('value')
-    if ';' in value:
+    if value and ';' in value:
         message = "Error: ';' Using character in query strings is not allowed."
         response = {'status':'failure','code':'403','message':message}
         return json.dumps(response, indent=2), 403
@@ -476,7 +489,7 @@ def set_ratelimit_sslsessions_global():
         response = {'status':'failure','code':'405','message':message}
         return json.dumps(response, indent=2), 405
     value = request.args.get('value')
-    if ';' in value:
+    if value and ';' in value:
         message = "Error: ';' Using character in query strings is not allowed."
         response = {'status':'failure','code':'403','message':message}
         return json.dumps(response, indent=2), 403
@@ -495,7 +508,8 @@ def set_server_addr():
     server = request.args.get('server')
     ip = request.args.get('ip')
     port = request.args.get('port')
-    if ';' in backend or ';' in server or ';' in ip or ';' in port:
+    query_strings = filter(None, [backend, server, ip, port])
+    if any(';' in qstr for qstr in query_strings):
         message = "Error: ';' Using character in query strings is not allowed."
         response = {'status':'failure','code':'403','message':message}
         return json.dumps(response, indent=2), 403
@@ -520,7 +534,8 @@ def set_server_agent():
     backend = request.args.get('backend')
     server = request.args.get('server')
     state = request.args.get('state')
-    if ';' in backend or ';' in server or ';' in state:
+    query_strings = filter(None, [backend, server, state])
+    if any(';' in qstr for qstr in query_strings):
         message = "Error: ';' Using character in query strings is not allowed."
         response = {'status':'failure','code':'403','message':message}
         return json.dumps(response, indent=2), 403
@@ -541,8 +556,8 @@ def set_server_health():
     backend = request.args.get('backend')
     server = request.args.get('server')
     state = request.args.get('state')
-    if ';' in backend or ';' in server or ';' in state:
-        message = "Error: ';' Using character in query strings is not allowed."
+    query_strings = filter(None, [backend, server, state])
+    if any(';' in qstr for qstr in query_strings):
         response = {'status':'failure','code':'403','message':message}
         return json.dumps(response, indent=2), 403
     if backend and server:
@@ -562,7 +577,8 @@ def set_server_checkport():
     backend = request.args.get('backend')
     server = request.args.get('server')
     port = request.args.get('port')
-    if ';' in backend or ';' in server or ';' in port:
+    query_strings = filter(None, [backend, server, port])
+    if any(';' in qstr for qstr in query_strings):
         message = "Error: ';' Using character in query strings is not allowed."
         response = {'status':'failure','code':'403','message':message}
         return json.dumps(response, indent=2), 403
@@ -583,7 +599,8 @@ def set_server_state():
     backend = request.args.get('backend')
     server = request.args.get('server')
     state = request.args.get('state')
-    if ';' in backend or ';' in server or ';' in state:
+    query_strings = filter(None, [backend, server, state])
+    if any(';' in qstr for qstr in query_strings):
         message = "Error: ';' Using character in query strings is not allowed."
         response = {'status':'failure','code':'403','message':message}
         return json.dumps(response, indent=2), 403
@@ -604,7 +621,8 @@ def set_server_weight():
     backend = request.args.get('backend')
     server = request.args.get('server')
     weight = request.args.get('weight')
-    if ';' in backend or ';' in server or ';' in weight:
+    query_strings = filter(None, [backend, server, weight])
+    if any(';' in qstr for qstr in query_strings):
         message = "Error: ';' Using character in query strings is not allowed."
         response = {'status':'failure','code':'403','message':message}
         return json.dumps(response, indent=2), 403
@@ -625,7 +643,8 @@ def set_weight():
     backend = request.args.get('backend')
     server = request.args.get('server')
     weight = request.args.get('weight')
-    if ';' in backend or ';' in server or ';' in weight:
+    query_strings = filter(None, [backend, server, weight])
+    if any(';' in qstr for qstr in query_strings):
         message = "Error: ';' Using character in query strings is not allowed."
         response = {'status':'failure','code':'403','message':message}
         return json.dumps(response, indent=2), 403
@@ -644,7 +663,8 @@ def add_acl():
         return json.dumps(response, indent=2), 405
     acl = request.args.get('acl')
     pattern = request.args.get('pattern')
-    if ';' in acl or ';' in pattern:
+    query_strings = filter(None, [acl, pattern])
+    if any(';' in qstr for qstr in query_strings):
         message = "Error: ';' Using character in query strings is not allowed."
         response = {'status':'failure','code':'403','message':message}
         return json.dumps(response, indent=2), 403
@@ -658,7 +678,7 @@ def clear_acl():
         message = "Error: Read only mode is enabled"
         response = {'status':'failure','code':'405','message':message}
         return json.dumps(response, indent=2), 405
-    if ';' in acl:
+    if acl and ';' in acl:
         message = "Error: ';' Using character in query strings is not allowed."
         response = {'status':'failure','code':'403','message':message}
         return json.dumps(response, indent=2), 403
@@ -676,7 +696,8 @@ def del_acl():
         return json.dumps(response, indent=2), 405
     acl = request.args.get('acl')
     key = request.args.get('key')
-    if ';' in acl or ';' in key:
+    query_strings = filter(None, [acl, key])
+    if any(';' in qstr for qstr in query_strings):
         message = "Error: ';' Using character in query strings is not allowed."
         response = {'status':'failure','code':'403','message':message}
         return json.dumps(response, indent=2), 403
@@ -688,7 +709,8 @@ def get_acl():
     """Lookup the value <value> in the in the ACL <acl>."""
     acl = request.args.get('acl')
     value = request.args.get('value')
-    if ';' in acl or ';' in value:
+    query_strings = filter(None, [acl, value])
+    if any(';' in qstr for qstr in query_strings):
         message = "Error: ';' Using character in query strings is not allowed."
         response = {'status':'failure','code':'403','message':message}
         return json.dumps(response, indent=2), 403
@@ -699,7 +721,7 @@ def get_acl():
 def show_acl():
     """Dump info about acl converters."""
     acl = request.args.get('acl')
-    if ';' in acl:
+    if acl and ';' in acl:
         message = "Error: ';' Using character in query strings is not allowed."
         response = {'status':'failure','code':'403','message':message}
         return json.dumps(response, indent=2), 403
@@ -711,7 +733,7 @@ def show_acl():
 def show_map():
     """Dump info about map converters."""
     mp = request.args.get('map')
-    if ';' in mp:
+    if mp and ';' in mp:
         message = "Error: ';' Using character in query strings is not allowed."
         response = {'status':'failure','code':'403','message':message}
         return json.dumps(response, indent=2), 403
@@ -728,7 +750,8 @@ def add_map():
     mp = request.args.get('map')
     key = request.args.get('key')
     value = request.args.get('value')
-    if ';' in mp or ';' in key or ';' in value:
+    query_strings = filter(None, [mp, key, value])
+    if any(';' in qstr for qstr in query_strings):
         message = "Error: ';' Using character in query strings is not allowed."
         response = {'status':'failure','code':'403','message':message}
         return json.dumps(response, indent=2), 403
@@ -743,7 +766,7 @@ def clear_map():
         response = {'status':'failure','code':'405','message':message}
         return json.dumps(response, indent=2), 405
     mp = request.args.get('map')
-    if ';' in mp:
+    if mp and ';' in mp:
         message = "Error: ';' Using character in query strings is not allowed."
         response = {'status':'failure','code':'403','message':message}
         return json.dumps(response, indent=2), 403
@@ -760,7 +783,8 @@ def del_map():
         return json.dumps(response, indent=2), 405
     mp = request.args.get('map')
     key = request.args.get('key')
-    if ';' in mp or ';' in key:
+    query_strings = filter(None, [mp, key])
+    if any(';' in qstr for qstr in query_strings):
         message = "Error: ';' Using character in query strings is not allowed."
         response = {'status':'failure','code':'403','message':message}
         return json.dumps(response, indent=2), 403
@@ -772,7 +796,8 @@ def get_map():
     """Lookup the value <value> in the in the map <map>."""
     mp = request.args.get('map')
     value = request.args.get('value')
-    if ';' in mp or ';' in value:
+    query_strings = filter(None, [mp, value])
+    if any(';' in qstr for qstr in query_strings):
         message = "Error: ';' Using character in query strings is not allowed."
         response = {'status':'failure','code':'403','message':message}
         return json.dumps(response, indent=2), 403
@@ -789,7 +814,8 @@ def set_map():
     mp = request.args.get('map')
     key = request.args.get('key')
     value = request.args.get('value')
-    if ';' in mp or ';' in key or ';' in value:
+    query_strings = filter(None, [mp, key, value])
+    if any(';' in qstr for qstr in query_strings):
         message = "Error: ';' Using character in query strings is not allowed."
         response = {'status':'failure','code':'403','message':message}
         return json.dumps(response, indent=2), 403
@@ -804,7 +830,7 @@ def set_timeout_cli():
         response = {'status':'failure','code':'405','message':message}
         return json.dumps(response, indent=2), 405
     delay = request.args.get('delay')
-    if ';' in delay:
+    if delay and ';' in delay:
         message = "Error: ';' Using character in query strings is not allowed."
         response = {'status':'failure','code':'403','message':message}
         return json.dumps(response, indent=2), 403
