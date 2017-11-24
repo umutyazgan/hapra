@@ -714,7 +714,7 @@ def get_acl():
         message = "Error: ';' Using character in query strings is not allowed."
         response = {'status':'failure','code':'403','message':message}
         return json.dumps(response, indent=2), 403
-    ga = g_acl('get acl ', acl, value)
+    ga = g_acl_map('get acl ', acl, value)
     return ga.jsonify()
 
 @app.route('/hapra/show/acl', methods=['GET'])
