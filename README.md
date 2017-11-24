@@ -9,9 +9,11 @@ You can install hapra to you local machine or to a Docker container.
 
 #### Dependencies
 
-For this method, all you need on your local machine is Docker. Check
-your distributions repositories for native packages or Docker
-Documentation for installation process on different distributions.
+For this method, all you need on your local machine is Docker and
+HAProxy 1.7(Other versions are not tested and probably will **NOT** work
+properly.). Check your distributions repositories for native packages or
+Docker Documentation for installation process on different
+distributions.
 
 #### Installation
 
