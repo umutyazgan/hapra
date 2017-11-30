@@ -39,13 +39,13 @@ type=beg, case=sensitive, found=yes, idx=tree, key="1", value="deneme1", type="s
 	"status": "success",
 	"code": "200",
 	"response": {
-		"type": "value 1",
-		"case": "value 2",
-		"found": "value 3",
-		"idx": "value 4",
-		"key": "value 5",
-		"value": "value 6",
-		"type": "value 7"
+		"type": "beg",
+		"case": "sensitive",
+		"found": "yes",
+		"idx": "tree",
+		"key": "1",
+		"value": "deneme1",
+		"type": "str"
 	}
 }
 ```
@@ -60,6 +60,30 @@ type=beg, case=sensitive, found=yes, idx=tree, key="1", value="deneme1", type="s
 * `acl`: `#<id>` or the `<file>` returned by `show acl`.
 * `value`: value to look up.
 
+#### Output Format
+
+**Socket Output:**
+
+```sh
+type=int, case=sensitive, match=yes, idx=list, pattern="1:"
+```
+
+**Successful API Call Output:**
+
+```JSON
+{
+	"status": "success",
+	"code": "200",
+	"response": {
+		"type": "int",
+		"case": "sensitive",
+		"match": "yes",
+		"idx": "list",
+		"pattern": "1:"
+	}
+}
+```
+
 ### [`get weight <backend>/<server>`](https://cbonte.github.io/haproxy-dconv/1.7/management.html#9.3-get%20weight)
 
 #### URL Structure
@@ -71,6 +95,21 @@ type=beg, case=sensitive, found=yes, idx=tree, key="1", value="deneme1", type="s
 * `backend`: name of the backend that contains the server
 * `server`: name of the server that you want to get weight from
 
+**Socket Output:**
+
+```sh
+1 (initial 1)
+```
+
+**Successful API Call Output:**
+
+```JSON
+{
+	"weight": "1",
+	"initial": "1"
+}
+```
+
 ### [`help`](https://cbonte.github.io/haproxy-dconv/1.7/management.html#9.3-help)
 
 #### URL Structure
@@ -78,6 +117,35 @@ type=beg, case=sensitive, found=yes, idx=tree, key="1", value="deneme1", type="s
 ```
 .../hapra/help
 ```
+
+**Socket Output:**
+
+```
+  help           : this message
+  prompt         : toggle interactive mode with prompt
+  quit           : disconnect
+  disable agent  : disable agent checks (use 'set server' instead)
+  disable health : disable health checks (use 'set server' instead)
+  disable server : disable a server for maintenance (use 'set server' instead)
+  enable agent   : enable agent checks (use 'set server' instead)
+  ...            : ...
+```
+
+**Successful API Call Output:**
+
+```JSON
+{
+	"help": "this message",
+	"prompt": "toggle interactive mode with prompt",
+	"quit": "disconnect",
+	"disable agent": "disable agent checks (use 'set server' instead)",
+	"disable health": "disable health checks (use 'set server' instead)",
+	"disable server": "disable a server for maintenance (use 'set server' instead)",
+	"enable agent": "enable agent checks (use 'set server' instead)",
+	"...": "..."
+}
+```
+
 
 ### [`show env [<name>]`](https://cbonte.github.io/haproxy-dconv/1.7/management.html#9.3-show%20env)
 

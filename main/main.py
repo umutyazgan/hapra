@@ -14,7 +14,7 @@ def test():
 #    test_str = str(app.config['READ_ONLY'])
     return "True"
 
-#   TODO: add timeout mechanism
+#  TODO: add timeout mechanism
 
 #  NOTE: jsonify() method used in this file is NOT the jsonify()
 #        method from Flask framework! I know it's a horrible naming
