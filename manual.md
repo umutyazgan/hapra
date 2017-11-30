@@ -177,6 +177,101 @@ ENV_VAR_3=VALUE_3
 }
 ```
 
+### [`show stat [{<iid>|<proxy>} <type> <sid>] [typed]`](https://cbonte.github.io/haproxy-dconv/1.7/management.html#9.3-show%20stat)
+
+#### URL Structure
+
+```
+.../hapra/show/stat?iid=<iid>&type=<type>&sid=<sid>
+```
+
+* `iid`: A proxy ID. Use -1 to dump everything. Usage of proxy name instead of
+		 ID is not tested therefore, not recommended.
+* `type`: Type of dumpable objects. 1 for frontends, 2 for backends, 4 for
+		  servers, -1 for everything. These values can be ORed like this:
+		  1 + 2 = 3 for frontend + backend,
+		  1 + 2 + 4 = 7 for frontend + backend + server.
+* `sid`: Server ID. Use -1 to dump everything.
+
+(You must run this command with either no arguments or all arguments. It won't
+work when invoked with only 1 or 2 arguments)
+
+**Socket Output:**
+
+This method uses
+[typed](https://cbonte.github.io/haproxy-dconv/1.7/management.html#9.2)
+format instead of default CSV format.
+```
+F.2.0.0.pxname.1:KNS:str:haproxy3-monitoring
+F.2.0.1.svname.1:KNS:str:FRONTEND
+F.2.0.4.scur.1:MGP:u32:0
+F.2.0.5.smax.1:MMP:u32:0
+F.2.0.6.slim.1:CLP:u32:3000
+F.2.0.7.stot.1:MCP:u64:0
+F.2.0.8.bin.1:MCP:u64:0
+F.2.0.9.bout.1:MCP:u64:0
+...
+B.2.0.0.pxname.1:KNS:str:haproxy3-monitoring
+B.2.0.1.svname.1:KNS:str:BACKEND
+B.2.0.2.qcur.1:MGP:u32:0
+B.2.0.3.qmax.1:MMP:u32:0
+B.2.0.4.scur.1:MGP:u32:0
+B.2.0.5.smax.1:MMP:u32:0
+B.2.0.6.slim.1:CLP:u32:300
+B.2.0.7.stot.1:MCP:u64:0
+B.2.0.8.bin.1:MCP:u64:0
+...
+```
+
+**Successful API Call Output:**
+
+```JSON
+[
+	{
+		"type": "Frontend",
+		"iid": "2",
+		"sid": "0",
+		"fields": [
+			{
+				"pno": "1",
+				"pxname": "haproxy3-monitoring",
+				"svname": "FRONTEND",
+				"...": "..."
+			},
+			{
+				"pno": "2",
+				"pxname": "haproxy3-monitoring",
+				"svname": "FRONTEND",
+				"...": "..."
+			},
+			"..."
+		]
+	},
+	{
+		"type": "Backend",
+		"iid": "2",
+		"sid": "0",
+		"fields": [
+			{
+				"pno": "1",
+				"pxname": "haproxy3-monitoring",
+				"svname": "BACKEND",
+				"...": "..."
+			}
+			{
+				"pno": "2",
+				"pxname": "haproxy3-monitoring",
+				"svname": "BACKEND",
+				"...": "..."
+			},
+			"..."
+		]
+	},
+	"..."
+]
+```
+More explanation will be added for this output format.
+<!--
 ### [`show backend`](https://cbonte.github.io/haproxy-dconv/1.7/management.html#9.3-show%20backend)
 
 #### URL Structure
@@ -201,4 +296,128 @@ backend-2
 	"1": "backend-1",
 	"2": "backend-2"
 }
+```
+-->
+### [`show info [typed]`](https://cbonte.github.io/haproxy-dconv/1.7/management.html#9.3-show%20info)
+
+#### URL Structure
+
+```
+.../hapra/show/info
+```
+(You must run this command with either no arguments or all arguments. It won't
+work when invoked with only 1 or 2 arguments)
+
+**Socket Output:**
+
+This method uses
+[typed](https://cbonte.github.io/haproxy-dconv/1.7/management.html#9.2)
+format instead of default CSV format.
+```
+0.Name.1:POS:str:HAProxy
+1.Version.1:POS:str:1.7.9-1ubuntu1
+2.Release_date.1:POS:str:2017/09/14
+3.Nbproc.1:CGS:u32:1
+4.Process_num.1:KGP:u32:1
+5.Pid.1:SGP:u32:1045
+6.Uptime.1:MDP:str:0d 2h37m22s
+7.Uptime_sec.1:MDP:u32:9442
+8.Memmax_MB.1:CLP:u32:0
+9.PoolAlloc_MB.1:MGP:u32:0
+10.PoolUsed_MB.1:MGP:u32:0
+...
+```
+
+**Successful API Call Output:**
+
+```JSON
+[
+	{
+		"pno": "1",
+		"Name": "HAProxy",
+		"Version": "1.7.9-1ubuntu1",
+		"Release_date": "2017/09/14",
+		"Nbproc": "1",
+		"Process_num": "1",
+		"...": "..."
+	},
+	{
+		"pno": "2",
+		"Name": "HAProxy",
+		"Version": "1.7.9-1ubuntu1",
+		"Release_date": "2017/09/14",
+		"Nbproc": "1",
+		"Process_num": "1",
+		"...": "..."
+	},
+	"..."
+]
+```
+More explanation will be added for this output format.
+
+### [`show backend`](https://cbonte.github.io/haproxy-dconv/1.7/management.html#9.3-show%20backend)
+
+#### URL Structure
+
+```
+.../hapra/show/backend
+```
+
+**Socket Output:**
+
+```sh
+backend-0
+backend-1
+backend-2
+```
+
+**Successful API Call Output:**
+
+```JSON
+{
+	"0": "backend-0",
+	"1": "backend-1",
+	"2": "backend-2"
+}
+```
+
+### [`show servers state`](https://cbonte.github.io/haproxy-dconv/1.7/management.html#9.3-show%20servers%20state)
+
+#### URL Structure
+
+```
+.../hapra/show/servers-state?backend=<backend>
+```
+
+* `backend`: Backend name to limit output to desired backend only.
+
+**Socket Output:**
+
+```
+# be_id be_name srv_id srv_name srv_addr srv_op_state srv_admin_state srv_uweight srv_iweight srv_time_since_last_change srv_check_status srv_check_result srv_check_health srv_check_state srv_agent_state bk_f_forced_id srv_f_forced_id
+4 app-main 1 nginx1 172.17.0.2 0 0 1 1 10304 17 2 0 6 22 0 0
+4 app-main 2 nginx2 172.17.0.3 0 0 1 1 10303 8 2 0 6 22 0 0
+5 app-main2 1 nginx3 172.17.0.4 0 0 1 1 10303 8 2 0 6 22 0 0
+```
+
+**Successful API Call Output:**
+
+```JSON
+[
+	{
+		"be_id": "4",
+		"be_name": "app-main",
+		"srv_id": "1",
+		"srv_name": "nginx1",
+		"...": "..."
+	},
+	{
+		"be_id": "4",
+		"be_name": "app-main",
+		"srv_id": "2",
+		"srv_name": "nginx2",
+		"...": "..."
+	},
+	"..."
+]
 ```
