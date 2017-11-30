@@ -59,6 +59,7 @@ def show_info():
 @app.route('/hapra/show/servers-state', methods=['GET'])
 def show_servers_state():
     """Return output of "show servers state" socket command as a JSON string"""
+    backend = request.args.get('backend')
     if backend and ';' in backend:
         message = "Error: ';' Using character in query strings is not allowed."
         response = {'status':'failure','code':'403','message':message}
